@@ -1,4 +1,4 @@
-package Crawler;
+package crawler;
 
 public class Spider {
 }

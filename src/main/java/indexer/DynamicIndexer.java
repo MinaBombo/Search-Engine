@@ -1,4 +1,4 @@
-package Indexer;
+package indexer;
 
 public class DynamicIndexer {
 }
