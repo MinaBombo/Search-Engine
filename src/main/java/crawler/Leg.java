@@ -4,10 +4,19 @@ public class Leg extends Thread{
 
     private final Spider parentSpider;
 
+
     Leg(Spider spider){
         parentSpider = spider;
+
     }
 
+    private void downloadUrl(String urlString){
+
+    }
+
+    private void processUrl(String url){
+
+    }
 
     @Override
     public void run() {
