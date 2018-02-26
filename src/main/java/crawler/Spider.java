@@ -22,7 +22,7 @@ public class Spider {
     }
 
     private void seedList(String seedFilePath){
-        toBeVisitedPages = new LinkedList<String>();
+        toBeVisitedPages = new LinkedList<>();
         try {
             File file = new File(seedFilePath);
             FileReader fileReader = new FileReader(file);
