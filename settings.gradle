@@ -1,0 +1,3 @@
+
+rootProject.name = 'APTProject'
+include 'Indexer','Crawler'

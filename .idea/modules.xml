@@ -2,7 +2,15 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Search-Engine.iml" filepath="$PROJECT_DIR$/Search-Engine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/APTProject.iml" filepath="$PROJECT_DIR$/.idea/modules/APTProject.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/APTProject_main.iml" filepath="$PROJECT_DIR$/.idea/modules/APTProject_main.iml" group="APTProject" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/APTProject_test.iml" filepath="$PROJECT_DIR$/.idea/modules/APTProject_test.iml" group="APTProject" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Crawler/Crawler.iml" filepath="$PROJECT_DIR$/.idea/modules/Crawler/Crawler.iml" group="Crawler" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Crawler/Crawler_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Crawler/Crawler_main.iml" group="Crawler" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Crawler/Crawler_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Crawler/Crawler_test.iml" group="Crawler" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Indexer/Indexer.iml" filepath="$PROJECT_DIR$/.idea/modules/Indexer/Indexer.iml" group="Indexer" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Indexer/Indexer_main.iml" filepath="$PROJECT_DIR$/.idea/modules/Indexer/Indexer_main.iml" group="Indexer" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/Indexer/Indexer_test.iml" filepath="$PROJECT_DIR$/.idea/modules/Indexer/Indexer_test.iml" group="Indexer" />
     </modules>
   </component>
 </project>

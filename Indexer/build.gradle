@@ -1,0 +1,10 @@
+apply plugin : 'java'
+apply plugin : 'application'
+dependencies {
+	compile 'org.postgresql:postgresql:42.2.2.jre7'
+}
+
+repositories {
+	mavenCentral()
+}
+mainClassName = 'indexer.DynamicIndexer'
