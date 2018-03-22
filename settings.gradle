@@ -1,3 +1,2 @@
-
-rootProject.name = 'APTProject'
+rootProject.name = 'SearchEngine'
 include 'Indexer','Crawler'

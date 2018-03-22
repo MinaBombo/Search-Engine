@@ -7,4 +7,4 @@ dependencies {
 repositories {
 	mavenCentral()
 }
-mainClassName = 'indexer.DynamicIndexer'
+mainClassName = 'Indexer.DynamicIndexer'

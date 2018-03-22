@@ -1,4 +1,4 @@
-package indexer;
+package Indexer;
 
 public class StaticIndexer {
 }

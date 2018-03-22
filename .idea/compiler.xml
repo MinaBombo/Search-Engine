@@ -8,6 +8,8 @@
       <module name="Crawler_test" target="1.9" />
       <module name="Indexer_main" target="1.9" />
       <module name="Indexer_test" target="1.9" />
+      <module name="SearchEngine_main" target="1.9" />
+      <module name="SearchEngine_test" target="1.9" />
     </bytecodeTargetLevel>
   </component>
 </project>
