@@ -22,7 +22,11 @@ public class DynamicIndexer {
         document.setUrl("akfhkfbajkbfh");
         driver.insertDocument(document);
         System.out.println(document.getId());
-        Word word = new Word();
+        document.setUrl("Ahmed");
+        document.setPath("Hassan");
+        driver.updateDocument(document);
+        //driver.deleteDocument(document);
+       Word word = new Word();
         word.setText("Hassan");
         word.setDocument(document);
         Word word1 = new Word();
@@ -86,8 +90,7 @@ public class DynamicIndexer {
         change(word9);
         driver.updateWords(words);
         driver.deleteWords(words);
-        
-
-
+        driver.deleteDocument(document);
+       driver.close();
     }
 }
