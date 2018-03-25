@@ -25,11 +25,11 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.Document
   OWNER TO "SearchEngine";
-
+--Edit the Text type, so it consumes less memory
 CREATE TABLE public.Word
 (
   ID         SERIAL,
-  Text       CHARACTER VARYING(80) NOT NULL,
+  Text       TEXT NOT NULL,
   DocumentID INTEGER               NOT NULL REFERENCES Document (ID)
 )
 WITH (

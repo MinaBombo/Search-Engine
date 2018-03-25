@@ -4,6 +4,10 @@ public class Word {
     private String text;
     private Document document;
     private Integer id;
+    public Word(String text,Document document){
+        setText(text);
+        setDocument(document);
+    }
     public String getText() {
         return text;
     }
