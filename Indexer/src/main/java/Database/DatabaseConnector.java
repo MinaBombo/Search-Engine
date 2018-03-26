@@ -1,18 +1,21 @@
 package Database;
 
+import org.apache.commons.dbcp2.BasicDataSource;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DataBaseConnector implements Closeable {
+public class DatabaseConnector implements Closeable {
     private Connection connection;
-    public DataBaseConnector() throws SQLException {
-        String url = "jdbc:postgresql://localhost/SearchEngineDatabase";
-        String user = "SearchEngine";
-        String password = "root";
-        connection = DriverManager.getConnection(url, user, password);
+    public DatabaseConnector() throws SQLException {
+//        String url = "jdbc:postgresql://localhost/SearchEngineDatabase";
+//        String user = "SearchEngine";
+//        String password = "root";
+//        connection = DriverManager.getConnection(url, user, password);
+        connection = ConnectionPool.getInstance().getConnection();
     }
 
     public Connection getConnection() {
@@ -27,7 +30,7 @@ public class DataBaseConnector implements Closeable {
         catch (SQLException exception)
         {
             System.err.println("Couldn't Close Connection");
-            System.err.println(exception.getStackTrace());
+            exception.printStackTrace();
             System.err.println(exception.getSQLState());
 
         }

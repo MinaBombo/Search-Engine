@@ -4,12 +4,12 @@
     <bytecodeTargetLevel>
       <module name="APTProject_main" target="1.9" />
       <module name="APTProject_test" target="1.9" />
-      <module name="Crawler_main" target="1.9" />
-      <module name="Crawler_test" target="1.9" />
-      <module name="Indexer_main" target="1.9" />
-      <module name="Indexer_test" target="1.9" />
-      <module name="SearchEngine_main" target="1.9" />
-      <module name="SearchEngine_test" target="1.9" />
+      <module name="Crawler_main" target="1.8" />
+      <module name="Crawler_test" target="1.8" />
+      <module name="Indexer_main" target="1.8" />
+      <module name="Indexer_test" target="1.8" />
+      <module name="SearchEngine_main" target="1.8" />
+      <module name="SearchEngine_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

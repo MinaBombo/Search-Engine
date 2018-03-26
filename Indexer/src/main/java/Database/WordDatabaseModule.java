@@ -6,11 +6,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 public class WordDatabaseModule implements DatabaseModule<Word> {
-    private DataBaseConnector connector;
+    private DatabaseConnector connector;
 
-    public WordDatabaseModule(DataBaseConnector connector) {
+    public WordDatabaseModule(DatabaseConnector connector) {
         this.connector = connector;
     }
 
@@ -49,4 +50,9 @@ public class WordDatabaseModule implements DatabaseModule<Word> {
             statement.executeUpdate();
             statement.close();
         }
+
+    @Override
+    public List<Word> select() throws SQLException {
+        return null;
+    }
 }

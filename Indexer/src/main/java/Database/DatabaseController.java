@@ -4,19 +4,16 @@ import Indexer.Document;
 import Indexer.Word;
 
 import java.io.Closeable;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
 
 public class DatabaseController implements Closeable {
-    DataBaseConnector connector;
+    DatabaseConnector connector;
     DocumentDatabaseModule documentModule;
     WordDatabaseModule wordModule;
     WordListDatabaseModule wordsModule;
     public DatabaseController() throws SQLException {
-        connector = new DataBaseConnector();
+        connector = new DatabaseConnector();
         documentModule = new DocumentDatabaseModule(connector);
         wordModule = new WordDatabaseModule(connector);
         wordsModule = new WordListDatabaseModule(connector);
@@ -100,6 +97,15 @@ public class DatabaseController implements Closeable {
         catch (SQLException exception){
             handleSQLException(exception,"Error in deleting list of words");
         }
+    }
+    public List<Document> getUnprocessedDocuments(){
+        try{
+            return documentModule.select();
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error in getting unprocessed documents");
+        }
+        return null;
     }
     private void handleSQLException(SQLException exception, String message) {
         System.err.println(message);

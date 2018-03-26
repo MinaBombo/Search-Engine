@@ -9,9 +9,9 @@ import java.sql.Statement;
 import java.util.List;
 
 public class WordListDatabaseModule implements DatabaseModule<List<Word>> {
-    private DataBaseConnector connector;
+    private DatabaseConnector connector;
 
-    WordListDatabaseModule(DataBaseConnector connector) {
+    WordListDatabaseModule(DatabaseConnector connector) {
         this.connector = connector;
     }
 
@@ -58,5 +58,10 @@ public class WordListDatabaseModule implements DatabaseModule<List<Word>> {
         statement.executeBatch();
         statement.close();
 
+    }
+
+    @Override
+    public List<List<Word>> select() throws SQLException {
+        return null;
     }
 }

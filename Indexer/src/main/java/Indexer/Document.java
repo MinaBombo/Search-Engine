@@ -2,21 +2,32 @@ package Indexer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public class Document {
     private Integer id;
-    private String path;
+    private String name;
     private String url;
-    private HashSet<Word> words;
+
+    public Boolean getProcessed() {
+        return processed;
+    }
+
+    public void setProcessed(Boolean processed) {
+        this.processed = processed;
+    }
+
+    private Boolean processed;
+    private List<Word> words;
     public Document(){
-        words = new HashSet<Word>();
+        words = new ArrayList<>();
     }
     public Integer getId() {
         return id;
     }
 
-    public String getPath() {
-        return path;
+    public String getName() {
+        return name;
     }
 
     public String getUrl() {
@@ -27,15 +38,23 @@ public class Document {
         this.id = id;
     }
 
-    public void setPath(String path) {
-        this.path = path;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setUrl(String url) {
         this.url = url;
     }
 
-    public HashSet<Word> getWords() {
+    public List<Word> getWords() {
         return words;
+    }
+
+    public Document(Integer id , String name, String url,boolean processed){
+        setId(id);
+        setName(name);
+        setUrl(url);
+        setProcessed(processed);
+        words = new ArrayList<>();
     }
 }

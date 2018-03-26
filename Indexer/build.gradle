@@ -1,10 +1,6 @@
-apply plugin : 'java'
-apply plugin : 'application'
 dependencies {
 	compile 'org.postgresql:postgresql:42.2.2.jre7'
-}
-
-repositories {
-	mavenCentral()
+	compile 'org.apache.opennlp:opennlp-tools:1.8.4'
+    compile 'org.apache.commons:commons-dbcp2:2.2.0'
 }
 mainClassName = 'Indexer.DynamicIndexer'
