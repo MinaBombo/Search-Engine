@@ -1,5 +1,6 @@
 package Indexer;
 
+import Database.ConnectionPool;
 import Database.DatabaseController;
 import Util.DocumentReader;
 
@@ -33,5 +34,10 @@ public class DynamicIndexer {
         }while(!documents.isEmpty());
         pool.shutdown();
         controller.close();
+        try {
+            ConnectionPool.getInstance().close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

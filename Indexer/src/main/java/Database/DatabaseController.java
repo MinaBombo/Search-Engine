@@ -2,8 +2,15 @@ package Database;
 
 import Indexer.Document;
 import Indexer.Word;
+import org.postgresql.PGConnection;
+import org.postgresql.copy.CopyIn;
+import org.postgresql.copy.CopyManager;
+import org.postgresql.core.BaseConnection;
+import org.postgresql.core.SqlCommand;
 
 import java.io.Closeable;
+import java.nio.charset.Charset;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -12,6 +19,7 @@ public class DatabaseController implements Closeable {
     DocumentDatabaseModule documentModule;
     WordDatabaseModule wordModule;
     WordListDatabaseModule wordsModule;
+
     public DatabaseController() throws SQLException {
         connector = new DatabaseConnector();
         documentModule = new DocumentDatabaseModule(connector);
@@ -25,33 +33,31 @@ public class DatabaseController implements Closeable {
     }
 
     public void insertDocument(Document document) {
-        try{
+        try {
             documentModule.insert(document);
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             handleSQLException(exception, "Error in Inserting document");
         }
     }
 
     public void updateDocument(Document document) {
-        try{
+        try {
             documentModule.update(document);
-        }
-        catch (SQLException exception) {
+        } catch (SQLException exception) {
             handleSQLException(exception, "Error in updating document");
         }
     }
 
     public void deleteDocument(Document document) {
-       try{
-           documentModule.delete(document);
+        try {
+            documentModule.delete(document);
         } catch (SQLException exception) {
             handleSQLException(exception, "Error in deleting document");
         }
     }
 
     public void insertWord(Word word) {
-        try{
+        try {
             wordModule.insert(word);
         } catch (SQLException exception) {
             handleSQLException(exception, "Error in inserting new word");
@@ -59,15 +65,15 @@ public class DatabaseController implements Closeable {
     }
 
     public void updateWord(Word word) {
-       try{
-           wordModule.update(word);
+        try {
+            wordModule.update(word);
         } catch (SQLException exception) {
             handleSQLException(exception, "Error in updating word");
         }
     }
 
     public void deleteWord(Word word) {
-        try{
+        try {
             wordModule.delete(word);
         } catch (SQLException exception) {
             handleSQLException(exception, "Error in deleting word");
@@ -76,37 +82,38 @@ public class DatabaseController implements Closeable {
 
     public void insertWords(List<Word> words) {
         try{
-            wordsModule.insert(words);
+            wordsModule.copy(words);
         } catch (SQLException exception) {
             handleSQLException(exception, "Error in inserting a list of words");
         }
+
     }
-    public void updateWords(List<Word> words){
-        try{
+
+    public void updateWords(List<Word> words) {
+        try {
             wordsModule.update(words);
-        }
-        catch (SQLException exception){
-            handleSQLException(exception,"Error in updating list of words");
+        } catch (SQLException exception) {
+            handleSQLException(exception, "Error in updating list of words");
         }
     }
 
-    public void deleteWords(List<Word> words){
-        try{
+    public void deleteWords(List<Word> words) {
+        try {
             wordsModule.delete(words);
-        }
-        catch (SQLException exception){
-            handleSQLException(exception,"Error in deleting list of words");
+        } catch (SQLException exception) {
+            handleSQLException(exception, "Error in deleting list of words");
         }
     }
-    public List<Document> getUnprocessedDocuments(){
-        try{
+
+    public List<Document> getUnprocessedDocuments() {
+        try {
             return documentModule.select();
-        }
-        catch (SQLException exception){
-            handleSQLException(exception,"Error in getting unprocessed documents");
+        } catch (SQLException exception) {
+            handleSQLException(exception, "Error in getting unprocessed documents");
         }
         return null;
     }
+
     private void handleSQLException(SQLException exception, String message) {
         System.err.println(message);
         System.err.println(exception.getSQLState());

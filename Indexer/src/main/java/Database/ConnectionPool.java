@@ -2,11 +2,12 @@ package Database;
 
 import Indexer.DynamicIndexer;
 import org.apache.commons.dbcp2.BasicDataSource;
+import org.postgresql.core.BaseConnection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class ConnectionPool {
+public class ConnectionPool implements AutoCloseable {
     private BasicDataSource dataSource;
 
 
@@ -17,16 +18,18 @@ public class ConnectionPool {
     }
 
     private ConnectionPool() {
-        String url = "jdbc:postgresql://localhost/SearchEngineDatabase";
-        String user = "SearchEngine";
-        String password = "root";
         dataSource = new BasicDataSource();
-        dataSource.setUrl(url);
-        dataSource.setUsername(user);
-        dataSource.setPassword(password);
+        dataSource.setUrl(DatabaseConnector.url);
+        dataSource.setUsername(DatabaseConnector.user);
+        dataSource.setPassword(DatabaseConnector.password);
         dataSource.setInitialSize(DynamicIndexer.numThreads+1);
     }
     public Connection getConnection() throws SQLException{
         return dataSource.getConnection();
+    }
+
+    @Override
+    public void close() throws Exception {
+        dataSource.close();
     }
 }
