@@ -10,18 +10,19 @@ import java.sql.SQLException;
 
 public class DatabaseConnector implements Closeable {
     private Connection connection;
+    public static final String url = "jdbc:postgresql://localhost/SearchEngineDatabase";
+    public static final String user = "SearchEngine";
+    public static final String password = "root";
     public DatabaseConnector() throws SQLException {
-//        String url = "jdbc:postgresql://localhost/SearchEngineDatabase";
-//        String user = "SearchEngine";
-//        String password = "root";
-//        connection = DriverManager.getConnection(url, user, password);
         connection = ConnectionPool.getInstance().getConnection();
     }
 
-    public Connection getConnection() {
+    public Connection getPooledConnection() {
         return connection;
     }
-
+    public Connection getNonPooledConnection() throws  SQLException{
+            return DriverManager.getConnection(url,user,password);
+    }
     @Override
     public void close(){
         try{

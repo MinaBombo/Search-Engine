@@ -1,5 +1,6 @@
 mainClassName = 'crawler.Spider'
 
 dependencies{
+    compile 'org.jsoup:jsoup:1.11.2'
     compile project (':Indexer')
 }

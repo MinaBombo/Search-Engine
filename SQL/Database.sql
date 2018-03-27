@@ -32,7 +32,7 @@ VALUES ('TestDoc1.html', 'TestURL', FALSE), ('TestDoc2.html', 'TestURL', FALSE),
   , ('TestDoc4.html', 'TestURL', FALSE), ('TestDoc5.html', 'TestURL', FALSE), ('TestDoc6.html', 'TestURL', FALSE),
   ('TestDoc7.html', 'TestURL', FALSE)
   , ('TestDoc8.html', 'TestURL', FALSE), ('TestDoc9.html', 'TestURL', FALSE), ('TestDoc10.html', 'TestURL', FALSE),
-  ('TestDoc11.html', 'TestURL', FALSE),('TestDoc12.html', 'TestURL', FALSE);
+  ('TestDoc11.html', 'TestURL', FALSE), ('TestDoc12.html', 'TestURL', FALSE);
 --Edit the Text type, so it consumes less memory
 CREATE TABLE public.Word
 (
@@ -47,3 +47,19 @@ TABLESPACE pg_default;
 
 ALTER TABLE public.Word
   OWNER TO "SearchEngine";
+
+CREATE TABLE public.Link
+(
+  ID            SERIAL UNIQUE,
+  MainLink      TEXT NOT NULL,
+  RefrencedLink TEXT NOT NULL
+)
+WITH (
+OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE public.Link
+  OWNER TO "SearchEngine"
+
+\ ENCODING UTF - 8;

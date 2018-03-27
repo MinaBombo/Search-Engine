@@ -18,7 +18,7 @@ public class WordDatabaseModule implements DatabaseModule<Word> {
     @Override
     public void insert(Word word) throws SQLException {
         String sqlStatement = "INSERT INTO " + DatabaseColumn.WORD.toString() + " (Text,DocumentID) VALUES (?,?)";
-        PreparedStatement statement = connector.getConnection().prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, word.getText());
         statement.setInt(2, word.getDocument().getId());
         int affectedRows = statement.executeUpdate();
@@ -34,7 +34,7 @@ public class WordDatabaseModule implements DatabaseModule<Word> {
     @Override
     public void update(Word word) throws SQLException {
         String sqlStatement = "UPDATE " + DatabaseColumn.WORD.toString() + " SET Text = ? , DocumentID = ? WHERE ID = ?";
-        PreparedStatement statement = connector.getConnection().prepareStatement(sqlStatement);
+        PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement);
         statement.setString(1, word.getText());
         statement.setInt(2, word.getDocument().getId());
         statement.setInt(3, word.getId());
@@ -45,7 +45,7 @@ public class WordDatabaseModule implements DatabaseModule<Word> {
     @Override
     public void delete(Word word) throws SQLException {
         String sqlStatement = "DELETE FROM " + DatabaseColumn.WORD.toString() + " WHERE ID = ?";
-        PreparedStatement statement = connector.getConnection().prepareStatement(sqlStatement);
+        PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement);
             statement.setInt(1, word.getId());
             statement.executeUpdate();
             statement.close();

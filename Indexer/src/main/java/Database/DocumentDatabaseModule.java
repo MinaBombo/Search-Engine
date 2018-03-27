@@ -20,7 +20,7 @@ public class DocumentDatabaseModule implements DatabaseModule<Document> {
     @Override
     public void insert(Document document) throws SQLException {
         String sqlStatement = "INSERT INTO " + DatabaseColumn.DOCUMENT.toString() + "(Name,URL,Processed) VALUES (?,?,?)";
-        PreparedStatement statement = connector.getConnection().prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS);
+        PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, document.getName());
         statement.setString(2, document.getUrl());
         statement.setBoolean(3,document.getProcessed());
@@ -37,7 +37,7 @@ public class DocumentDatabaseModule implements DatabaseModule<Document> {
     @Override
     public void update(Document document) throws SQLException {
         String sqlStatement = "UPDATE " + DatabaseColumn.DOCUMENT.toString() + " SET Name = ? ,URL = ? ,Processed = ? WHERE ID = ?";
-        PreparedStatement statement = connector.getConnection().prepareStatement(sqlStatement);
+        PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement);
         statement.setString(1, document.getName());
         statement.setString(2, document.getUrl());
         statement.setBoolean(3,document.getProcessed());
@@ -49,7 +49,7 @@ public class DocumentDatabaseModule implements DatabaseModule<Document> {
     @Override
     public void delete(Document document) throws SQLException {
         String sqlStatement = "DELETE FROM " + DatabaseColumn.DOCUMENT.toString() + " WHERE ID = ?";
-        PreparedStatement statement = connector.getConnection().prepareStatement(sqlStatement);
+        PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement);
         statement.setInt(1, document.getId());
         statement.executeUpdate();
         statement.close();
@@ -58,7 +58,7 @@ public class DocumentDatabaseModule implements DatabaseModule<Document> {
     @Override
     public List<Document> select() throws SQLException {
        String sqlStatement = "SELECT ID, Name, URL , Processed FROM "+DatabaseColumn.DOCUMENT.toString()+" WHERE Processed = False";
-       Statement statement = connector.getConnection().createStatement();
+       Statement statement = connector.getPooledConnection().createStatement();
        ResultSet resultSet = statement.executeQuery(sqlStatement);
        List<Document> documents = new ArrayList<>();
        while (resultSet.next()){
