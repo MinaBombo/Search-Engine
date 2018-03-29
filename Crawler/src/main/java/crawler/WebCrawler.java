@@ -2,7 +2,7 @@ package crawler;
 
 import Database.ConnectionPool;
 import Database.DatabaseController;
-import Util.Seed;
+import BusinessModel.Seed;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -35,6 +35,7 @@ public class WebCrawler {
             System.exit(0);
         }
         pool = Executors.newFixedThreadPool(maxNumThreads);
+        ConnectionPool.getInstance().setInitialSize(maxNumThreads);
     }
     private static void cleanup(){
         pool.shutdown();

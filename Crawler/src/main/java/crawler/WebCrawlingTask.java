@@ -1,8 +1,9 @@
 package crawler;
 
 import Database.DatabaseController;
-import Util.DocumentManager;
-import Util.Seed;
+import Tools.DocumentManager;
+import BusinessModel.*;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -52,7 +53,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
             throw exception;
         }
         // If every thing succeeded then insert the document and write it to the disk
-        Indexer.Document indexerDoc = new Indexer.Document(
+        BusinessModel.Document indexerDoc = new BusinessModel.Document(
                 String.format("%d.html", jsoupDoc.location().hashCode()),
                 jsoupDoc.location(), false);
         DocumentManager.writeDocument(documentText, indexerDoc);

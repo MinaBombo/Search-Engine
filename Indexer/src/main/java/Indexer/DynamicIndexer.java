@@ -1,5 +1,6 @@
 package Indexer;
 
+import BusinessModel.Document;
 import Database.ConnectionPool;
 import Database.DatabaseController;
 
@@ -12,8 +13,9 @@ public class DynamicIndexer {
 
     public static final int numThreads = 5;
     public static void main(String[] args) throws SQLException, InterruptedException {
-        DatabaseController controller = new DatabaseController();
         ExecutorService pool =  Executors.newFixedThreadPool(numThreads);
+        ConnectionPool.getInstance().setInitialSize(numThreads);
+        DatabaseController controller = new DatabaseController();
         List<Document> documents;
         do{
             documents = controller.getUnprocessedDocuments();

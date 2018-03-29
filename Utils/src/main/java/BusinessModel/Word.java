@@ -1,4 +1,4 @@
-package Indexer;
+package BusinessModel;
 
 public class Word {
     private String text;

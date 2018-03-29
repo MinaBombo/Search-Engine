@@ -1,7 +1,7 @@
-package Util;
+package Tools;
 
-import Indexer.Document;
-import Indexer.Word;
+import BusinessModel.Document;
+import BusinessModel.Word;
 import opennlp.tools.stemmer.PorterStemmer;
 
 import java.io.*;

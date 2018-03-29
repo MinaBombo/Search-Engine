@@ -1,6 +1,6 @@
 package Database;
 
-import Util.Seed;
+import BusinessModel.Seed;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

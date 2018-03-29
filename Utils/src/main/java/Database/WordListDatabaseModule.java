@@ -1,15 +1,12 @@
 package Database;
 
-import Indexer.Document;
-import Indexer.Word;
+import BusinessModel.Word;
 import org.postgresql.PGConnection;
-import org.postgresql.copy.CopyIn;
 import org.postgresql.copy.CopyManager;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.List;
 

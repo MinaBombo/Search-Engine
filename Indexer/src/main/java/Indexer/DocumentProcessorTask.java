@@ -1,12 +1,13 @@
 package Indexer;
 
 
+import BusinessModel.Document;
 import Database.DatabaseController;
 
 import java.sql.SQLException;
 import java.util.concurrent.Callable;
 
-import static Util.DocumentManager.*;
+import static Tools.DocumentManager.*;
 
 public class DocumentProcessorTask implements Callable<Boolean> {
 

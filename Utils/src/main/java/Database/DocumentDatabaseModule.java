@@ -1,6 +1,6 @@
 package Database;
 
-import Indexer.Document;
+import BusinessModel.Document;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

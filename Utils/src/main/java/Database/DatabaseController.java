@@ -1,18 +1,10 @@
 package Database;
 
-import Indexer.Document;
-import Indexer.Word;
-import Util.Seed;
-import org.postgresql.PGConnection;
-import org.postgresql.copy.CopyIn;
-import org.postgresql.copy.CopyManager;
-import org.postgresql.core.BaseConnection;
-import org.postgresql.core.SqlCommand;
+import BusinessModel.Document;
+import BusinessModel.Word;
+import BusinessModel.Seed;
 
 import java.io.Closeable;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 

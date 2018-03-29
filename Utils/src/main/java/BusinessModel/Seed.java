@@ -1,4 +1,4 @@
-package Util;
+package BusinessModel;
 
 public class Seed {
 

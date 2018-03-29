@@ -1,9 +1,7 @@
-apply plugin : 'application'
+
 dependencies {
 	compile 'org.postgresql:postgresql:42.2.2.jre7'
 	compile 'org.apache.opennlp:opennlp-tools:1.8.4'
     compile 'org.apache.commons:commons-dbcp2:2.2.0'
-    compile project (':Utils')
 }
 
-mainClassName = 'Indexer.DynamicIndexer'
