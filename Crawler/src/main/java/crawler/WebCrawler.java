@@ -26,7 +26,7 @@ public class WebCrawler {
             System.err.println("Error while parsing arguments");
             System.err.println(e.toString());
             System.err.println("Setting parameters to default values");
-            maxNumThreads = Runtime.getRuntime().availableProcessors();
+            maxNumThreads = Runtime.getRuntime().availableProcessors()*2;
         }
         try{
             controller = new DatabaseController();
@@ -58,8 +58,11 @@ public class WebCrawler {
             try {
                 List<Future<List<Seed>>> taskResults = pool.invokeAll(tasks);
                 for (Future<List<Seed>> taskResult : taskResults) {
-                    controller.insertSeed(taskResult.get());
-                    processedURLCount++;
+                    List<Seed> result = taskResult.get();
+                    if(result != null){
+                        controller.insertSeed(result);
+                        ++processedURLCount;
+                    }
                 }
             } catch (ExecutionException | InterruptedException exception) {
                 System.err.println("Error while executing tasks");

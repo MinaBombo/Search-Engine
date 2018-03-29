@@ -22,7 +22,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
     }
 
     @Override
-    public List<Seed> call() throws Exception {
+    public List<Seed> call(){
         String documentText;
         List<Seed> seeds;
         DatabaseController controller;
@@ -31,7 +31,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
         } catch (SQLException exception) {
             System.err.println("Error while initializing database connection");
             exception.printStackTrace();
-            throw exception;
+            return null;
         }
         // Try to get the html document from the web.
         // If for any reason you failed, delete this seed and exit the task
@@ -49,7 +49,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
             exception.printStackTrace();
             controller.deleteSeed(seed);
             controller.close();
-            throw exception;
+            return null;
         }
         // If every thing succeeded then insert the document and write it to the disk
         Indexer.Document indexerDoc = new Indexer.Document(
