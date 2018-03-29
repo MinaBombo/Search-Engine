@@ -55,11 +55,6 @@ public class WebCrawler {
             for (Seed seed : seeds) {
                 tasks.add(new WebCrawlingTask(seed));
             }
-            try{
-                WebCrawlingTask.initializeDbController();
-            } catch (SQLException e){
-                System.exit(0);
-            }
             try {
                 List<Future<List<Seed>>> taskResults = pool.invokeAll(tasks);
                 for (Future<List<Seed>> taskResult : taskResults) {
@@ -69,11 +64,9 @@ public class WebCrawler {
             } catch (ExecutionException | InterruptedException exception) {
                 System.err.println("Error while executing tasks");
                 exception.printStackTrace();
-                WebCrawlingTask.closeDbController();
             }
             System.out.println(processedURLCount);
         } while (!seeds.isEmpty() && processedURLCount <= maxNumUrls);
-        WebCrawlingTask.closeDbController();
     }
 
     public static void main(String[] args) {

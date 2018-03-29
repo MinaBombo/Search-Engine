@@ -16,18 +16,6 @@ import java.util.concurrent.Callable;
 public class WebCrawlingTask implements Callable<List<Seed>> {
 
     private Seed seed;
-    private static DatabaseController controller;
-
-    static void initializeDbController() throws SQLException{
-        try {
-            controller = new DatabaseController();
-        } catch (SQLException exception) {
-            System.err.println("Error while initializing database connection");
-            exception.printStackTrace();
-            throw exception;
-        }
-    }
-    static void closeDbController(){controller.close();}
 
     WebCrawlingTask(Seed seed) {
         this.seed = seed;
@@ -37,6 +25,14 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
     public List<Seed> call() throws Exception {
         String documentText;
         List<Seed> seeds;
+        DatabaseController controller;
+        try {
+            controller = new DatabaseController();
+        } catch (SQLException exception) {
+            System.err.println("Error while initializing database connection");
+            exception.printStackTrace();
+            throw exception;
+        }
         // Try to get the html document from the web.
         // If for any reason you failed, delete this seed and exit the task
         Document jsoupDoc;
@@ -63,6 +59,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
         controller.insertDocument(indexerDoc);
         seed.setProcessed(true);
         controller.updateSeed(seed);
+        controller.close();
         return seeds;
     }
 }
