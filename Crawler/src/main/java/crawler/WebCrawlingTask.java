@@ -16,6 +16,18 @@ import java.util.concurrent.Callable;
 public class WebCrawlingTask implements Callable<List<Seed>> {
 
     private Seed seed;
+    private static DatabaseController controller;
+
+    static void initializeDbController() throws SQLException{
+        try {
+            controller = new DatabaseController();
+        } catch (SQLException exception) {
+            System.err.println("Error while initializing database connection");
+            exception.printStackTrace();
+            throw exception;
+        }
+    }
+    static void closeDbController(){controller.close();}
 
     WebCrawlingTask(Seed seed) {
         this.seed = seed;
@@ -23,24 +35,13 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
 
     @Override
     public List<Seed> call() throws Exception {
-        DatabaseController controller;
         String documentText;
         List<Seed> seeds;
-        // First try taking a connection, if can't do then simply exit the task
-        try {
-            controller = new DatabaseController();
-        } catch (SQLException exception) {
-            System.err.println("Error while getting the connection");
-            System.err.println(exception.getMessage());
-            exception.printStackTrace();
-            throw exception;
-        }
-        // Now try to get the html document from the web.
+        // Try to get the html document from the web.
         // If for any reason you failed, delete this seed and exit the task
         Document jsoupDoc;
         try {
             jsoupDoc = Jsoup.connect(seed.getUrl()).get();
-
             Elements links = jsoupDoc.select("a[href]");
             documentText = jsoupDoc.body().text();
             seeds = new LinkedList<>();
@@ -62,8 +63,6 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
         controller.insertDocument(indexerDoc);
         seed.setProcessed(true);
         controller.updateSeed(seed);
-        controller.close();
         return seeds;
-
     }
 }
