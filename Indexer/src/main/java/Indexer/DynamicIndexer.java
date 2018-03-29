@@ -9,10 +9,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.*;
 
+import static Tools.ThreadCounter.getNumThreads;
+
 public class DynamicIndexer {
 
-    public static final int numThreads = 5;
+
     public static void main(String[] args) throws SQLException, InterruptedException {
+        int numThreads = getNumThreads(args[0]);
         ExecutorService pool =  Executors.newFixedThreadPool(numThreads);
         ConnectionPool.getInstance().setInitialSize(numThreads);
         DatabaseController controller = new DatabaseController();

@@ -7,3 +7,6 @@ dependencies {
 }
 
 mainClassName = 'Indexer.DynamicIndexer'
+run{
+    args 5
+}

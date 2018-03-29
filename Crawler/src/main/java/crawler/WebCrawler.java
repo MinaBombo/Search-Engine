@@ -12,6 +12,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import static Tools.ThreadCounter.getNumThreads;
+
 public class WebCrawler {
 
     private final static int maxNumUrls = 5000;
@@ -20,14 +22,8 @@ public class WebCrawler {
     private static ExecutorService pool;
 
     private static void init(String[] args){
-        try{
-            maxNumThreads = Integer.parseInt(args[0]);
-        } catch (Exception e){
-            System.err.println("Error while parsing arguments");
-            System.err.println(e.toString());
-            System.err.println("Setting parameters to default values");
-            maxNumThreads = Runtime.getRuntime().availableProcessors()*2;
-        }
+
+        maxNumThreads = getNumThreads(args[0]);
         try{
             controller = new DatabaseController();
         } catch (SQLException e){
