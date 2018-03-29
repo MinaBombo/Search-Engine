@@ -25,7 +25,7 @@ public class SeedDatabaseModule implements DatabaseModule<List<Seed>> {
         String sqlStatement = "UPDATE "+DatabaseColumn.SEED +" SET URL = ?, Processed = ? WHERE ID = ?";
         PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement);
         statement.setString(1,seed.getUrl());
-        statement.setBoolean(2,seed.getProcessed());
+        statement.setBoolean(2,seed.isProcessed());
         statement.setInt(3,seed.getId());
         statement.executeUpdate();
         statement.close();
@@ -36,7 +36,7 @@ public class SeedDatabaseModule implements DatabaseModule<List<Seed>> {
         PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement);
         for(Seed seed : seeds) {
             statement.setString(1, seed.getUrl());
-            statement.setBoolean(2,seed.getProcessed());
+            statement.setBoolean(2,seed.isProcessed());
             statement.addBatch();
         }
 
