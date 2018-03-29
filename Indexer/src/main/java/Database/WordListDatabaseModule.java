@@ -6,6 +6,9 @@ import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyIn;
 import org.postgresql.copy.CopyManager;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.List;
@@ -35,17 +38,23 @@ public class WordListDatabaseModule implements DatabaseModule<List<Word>> {
     }
 
     public void copy(List<Word> words) throws SQLException {
-        String sqlStatement = "COPY " + DatabaseColumn.WORD + "(text , documentID) FROM STDIN";
+        String sqlStatement = "COPY " + DatabaseColumn.WORD + "(text , documentID) FROM STDIN WITH (FORMAT TEXT, DELIMITER '\t')";
         Connection connection = connector.getNonPooledConnection();
         CopyManager manager = ((PGConnection) connection).getCopyAPI();
         StringBuilder builder = new StringBuilder();
-        CopyIn copyIn = manager.copyIn(sqlStatement);
+        CharSequence forbidden = "\\.";
         for (Word word : words) {
+            //if(!word.getText().contains(forbidden))
             builder.append(word.getText()).append('\t').append(word.getDocument().getId()).append('\n');
         }
-        byte[] bytes = builder.toString().getBytes(Charset.forName("UTF-8"));
-        copyIn.writeToCopy(bytes, 0, bytes.length);
-        copyIn.endCopy();
+        BufferedReader reader = new BufferedReader(new StringReader(builder.toString()));
+        try{
+            manager.copyIn(sqlStatement,reader);
+        }
+        catch (IOException  | SQLException exception){
+            System.err.println("Error while Copying words");
+            exception.printStackTrace();
+        }
         connection.close();
     }
 

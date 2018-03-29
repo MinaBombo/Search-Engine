@@ -10,6 +10,7 @@ import org.postgresql.core.BaseConnection;
 import org.postgresql.core.SqlCommand;
 
 import java.io.Closeable;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -85,10 +86,9 @@ public class DatabaseController implements Closeable {
     public void insertWords(List<Word> words) {
         try{
             wordsModule.copy(words);
-        } catch (SQLException exception) {
+        } catch (SQLException exception ) {
             handleSQLException(exception, "Error in inserting a list of words");
         }
-
     }
 
     public void updateWords(List<Word> words) {
