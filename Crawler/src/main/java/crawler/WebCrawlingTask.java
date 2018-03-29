@@ -55,10 +55,9 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
             throw exception;
         }
         // If every thing succeeded then insert the document and write it to the disk
-        Indexer.Document indexerDoc = new Indexer.Document();
-        indexerDoc.setUrl(jsoupDoc.location());
-        indexerDoc.setName(String.format("%d.html", jsoupDoc.location().hashCode()));
-        indexerDoc.setProcessed(false);
+        Indexer.Document indexerDoc = new Indexer.Document(
+                String.format("%d.html", jsoupDoc.location().hashCode()),
+                jsoupDoc.location(), false);
         DocumentManager.writeDocument(documentText, indexerDoc);
         controller.insertDocument(indexerDoc);
         seed.setProcessed(true);

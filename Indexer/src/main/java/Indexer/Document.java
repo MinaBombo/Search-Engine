@@ -10,12 +10,18 @@ public class Document {
     private String url;
     private Boolean processed;
     private List<Word> words;
-    
+
     public Document(){
         words = new ArrayList<>();
     }
     public Document(Integer id , String name, String url,boolean processed){
         setId(id);
+        setName(name);
+        setUrl(url);
+        setProcessed(processed);
+        words = new ArrayList<>();
+    }
+    public Document(String name, String url,boolean processed){
         setName(name);
         setUrl(url);
         setProcessed(processed);
