@@ -23,7 +23,7 @@ public class DocumentDatabaseModule implements DatabaseModule<Document> {
         PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, document.getName());
         statement.setString(2, document.getUrl());
-        statement.setBoolean(3,document.getProcessed());
+        statement.setBoolean(3,document.isProcessed());
         int affectedRows = statement.executeUpdate();
         if (affectedRows > 0) {
             ResultSet resultSet = statement.getGeneratedKeys();
@@ -40,7 +40,7 @@ public class DocumentDatabaseModule implements DatabaseModule<Document> {
         PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement);
         statement.setString(1, document.getName());
         statement.setString(2, document.getUrl());
-        statement.setBoolean(3,document.getProcessed());
+        statement.setBoolean(3,document.isProcessed());
         statement.setInt(4, document.getId());
         statement.executeUpdate();
         statement.close();
