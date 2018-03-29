@@ -2,6 +2,7 @@ package Database;
 
 import Indexer.Document;
 import Indexer.Word;
+import Util.Seed;
 import org.postgresql.PGConnection;
 import org.postgresql.copy.CopyIn;
 import org.postgresql.copy.CopyManager;
@@ -19,12 +20,13 @@ public class DatabaseController implements Closeable {
     DocumentDatabaseModule documentModule;
     WordDatabaseModule wordModule;
     WordListDatabaseModule wordsModule;
-
+    SeedDatabaseModule seedModule;
     public DatabaseController() throws SQLException {
         connector = new DatabaseConnector();
         documentModule = new DocumentDatabaseModule(connector);
         wordModule = new WordDatabaseModule(connector);
         wordsModule = new WordListDatabaseModule(connector);
+        seedModule = new SeedDatabaseModule(connector);
     }
 
     @Override
@@ -112,6 +114,39 @@ public class DatabaseController implements Closeable {
             handleSQLException(exception, "Error in getting unprocessed documents");
         }
         return null;
+    }
+    public void insertSeed (List<Seed> seeds){
+        try{
+            seedModule.insert(seeds);
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error in inserting Seeds");
+        }
+    }
+    public List<Seed> getUnprocessedSeeds(int limit, int offset){
+        try{
+            return  seedModule.select(limit,offset);
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error in getting unprocessed seeds");
+        }
+        return null;
+    }
+    public void updateSeed(Seed seed){
+        try{
+            seedModule.update(seed);
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error in updating Seed");
+        }
+    }
+    public void deleteSeed(Seed seed){
+        try {
+            seedModule.delete(seed);
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error in deleting Seed");
+        }
     }
 
     private void handleSQLException(SQLException exception, String message) {

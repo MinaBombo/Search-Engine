@@ -31,12 +31,12 @@ TABLESPACE pg_default;
 
 ALTER TABLE Document
   OWNER TO "SearchEngine";
-INSERT INTO Document (Name, URL, Processed)
-VALUES ('TestDoc1.html', 'TestURL', FALSE), ('TestDoc2.html', 'TestURL', FALSE), ('TestDoc3.html', 'TestURL', FALSE)
-  , ('TestDoc4.html', 'TestURL', FALSE), ('TestDoc5.html', 'TestURL', FALSE), ('TestDoc6.html', 'TestURL', FALSE),
-  ('TestDoc7.html', 'TestURL', FALSE)
-  , ('TestDoc8.html', 'TestURL', FALSE), ('TestDoc9.html', 'TestURL', FALSE), ('TestDoc10.html', 'TestURL', FALSE),
-  ('TestDoc11.html', 'TestURL', FALSE), ('TestDoc12.html', 'TestURL', FALSE);
+-- INSERT INTO Document (Name, URL, Processed)
+-- VALUES ('TestDoc1.html', 'TestURL', FALSE), ('TestDoc2.html', 'TestURL', FALSE), ('TestDoc3.html', 'TestURL', FALSE)
+--   , ('TestDoc4.html', 'TestURL', FALSE), ('TestDoc5.html', 'TestURL', FALSE), ('TestDoc6.html', 'TestURL', FALSE),
+--   ('TestDoc7.html', 'TestURL', FALSE)
+--   , ('TestDoc8.html', 'TestURL', FALSE), ('TestDoc9.html', 'TestURL', FALSE), ('TestDoc10.html', 'TestURL', FALSE),
+--   ('TestDoc11.html', 'TestURL', FALSE), ('TestDoc12.html', 'TestURL', FALSE);
 --Edit the Text type, so it consumes less memory
 CREATE TABLE Word
 (
@@ -69,7 +69,8 @@ ALTER TABLE Link
 CREATE TABLE Seed
 (
   ID  SERIAL UNIQUE,
-  URL TEXT NOT NULL
+  URL TEXT NOT NULL,
+  Processed BOOLEAN DEFAULT  FALSE
 )
 WITH (
 OIDS = FALSE
@@ -78,5 +79,5 @@ TABLESPACE pg_default;
 
 ALTER TABLE Seed
   OWNER TO "SearchEngine";
-INSERT INTO Seed (URL) VALUES ('https://en.wikipedia.org/wiki/Main_Page');
+INSERT INTO Seed (URL,Processed) VALUES ('https://en.wikipedia.org/wiki/Main_Page',FALSE );
 ALTER USER "SearchEngine" SET search_path to 'SearchEngineSchema'
