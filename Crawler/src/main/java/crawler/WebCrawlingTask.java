@@ -8,9 +8,8 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
@@ -18,7 +17,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
 
     private Seed seed;
 
-    public WebCrawlingTask(Seed seed) {
+    WebCrawlingTask(Seed seed) {
         this.seed = seed;
     }
 
@@ -27,43 +26,45 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
         DatabaseController controller;
         String documentText;
         List<Seed> seeds;
-        //First try taking a connection, if can't do then simply exit the task
+        // First try taking a connection, if can't do then simply exit the task
         try {
             controller = new DatabaseController();
         } catch (SQLException exception) {
-            System.err.println("An error happened while getting the connection");
+            System.err.println("Error while getting the connection");
             System.err.println(exception.getMessage());
             exception.printStackTrace();
             throw exception;
         }
-        //Now try to get the html document from the web, if for any reason you failed, delete this seed and exit the task
-        Document doc;
+        // Now try to get the html document from the web.
+        // If for any reason you failed, delete this seed and exit the task
+        Document jsoupDoc;
         try {
-            doc = Jsoup.connect(seed.getUrl()).get();
+            jsoupDoc = Jsoup.connect(seed.getUrl()).get();
 
-            Elements links = doc.select("a[href]");
-            documentText = doc.body().text();
-            seeds = new ArrayList<>();
+            Elements links = jsoupDoc.select("a[href]");
+            documentText = jsoupDoc.body().text();
+            seeds = new LinkedList<>();
             for (Element link : links) {
                 seeds.add(new Seed(link.attr("abs:href"), false));
             }
         } catch (Exception exception) {
-            System.err.println("Error happened while getting the document from the web");
+            System.err.println("Error while downloading/parsing document from web");
             exception.printStackTrace();
             controller.deleteSeed(seed);
             controller.close();
             throw exception;
         }
-        //If every thing succedded then insert the document and write it to the disk
-        Indexer.Document document = new Indexer.Document();
-        document.setUrl(doc.location());
-        document.setName(String.format("%d.html", doc.location().hashCode()));
-        document.setProcessed(false);
-        DocumentManager.writeDocument(documentText, document);
-        controller.insertDocument(document);
+        // If every thing succeeded then insert the document and write it to the disk
+        Indexer.Document indexerDoc = new Indexer.Document();
+        indexerDoc.setUrl(jsoupDoc.location());
+        indexerDoc.setName(String.format("%d.html", jsoupDoc.location().hashCode()));
+        indexerDoc.setProcessed(false);
+        DocumentManager.writeDocument(documentText, indexerDoc);
+        controller.insertDocument(indexerDoc);
         seed.setProcessed(true);
         controller.updateSeed(seed);
         controller.close();
         return seeds;
+
     }
 }
