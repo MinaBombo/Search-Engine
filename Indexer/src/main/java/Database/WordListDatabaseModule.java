@@ -47,8 +47,8 @@ public class WordListDatabaseModule implements DatabaseModule<List<Word>> {
         copyIn.writeToCopy(bytes, 0, bytes.length);
         copyIn.endCopy();
         connection.close();
-
     }
+
     @Override
     public void update(List<Word> words) throws SQLException {
         String sqlStatement = "UPDATE " + DatabaseColumn.WORD.toString() + " SET Text = ? , DocumentID = ? WHERE ID = ?";

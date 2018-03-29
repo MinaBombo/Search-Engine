@@ -2,7 +2,6 @@ package Indexer;
 
 import Database.ConnectionPool;
 import Database.DatabaseController;
-import Util.DocumentReader;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

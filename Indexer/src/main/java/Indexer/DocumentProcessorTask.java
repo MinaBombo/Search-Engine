@@ -4,10 +4,9 @@ package Indexer;
 import Database.DatabaseController;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.concurrent.Callable;
 
-import static Util.DocumentReader.*;
+import static Util.DocumentManager.*;
 
 public class DocumentProcessorTask implements Callable<Boolean> {
 

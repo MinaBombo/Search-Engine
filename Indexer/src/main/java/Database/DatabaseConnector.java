@@ -1,9 +1,7 @@
 package Database;
 
-import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;

@@ -2,7 +2,9 @@ package Database;
 
 public enum DatabaseColumn {
     DOCUMENT ("Document"),
-    WORD ("Word");
+    WORD ("Word"),
+    LINK ("Link"),
+    SEED ("Seed");
 
     private final String tableName;
 
