@@ -58,7 +58,7 @@ public class WebCrawler {
             try{
                 WebCrawlingTask.initializeDbController();
             } catch (SQLException e){
-                e.printStackTrace();
+                System.exit(0);
             }
             try {
                 List<Future<List<Seed>>> taskResults = pool.invokeAll(tasks);
@@ -73,6 +73,7 @@ public class WebCrawler {
             }
             System.out.println(processedURLCount);
         } while (!seeds.isEmpty() && processedURLCount <= maxNumUrls);
+        WebCrawlingTask.closeDbController();
     }
 
     public static void main(String[] args) {
