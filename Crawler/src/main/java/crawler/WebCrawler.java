@@ -22,7 +22,6 @@ public class WebCrawler {
     private static ExecutorService pool;
 
     private static void init(String[] args){
-
         maxNumThreads = getNumThreads(args[0]);
         try{
             controller = new DatabaseController();
