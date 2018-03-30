@@ -77,7 +77,7 @@ public class DatabaseController implements Closeable {
 
     public void insertWords(List<Word> words) {
         try{
-            wordsModule.copy(words);
+            wordsModule.insert(words);
         } catch (SQLException exception ) {
             handleSQLException(exception, "Error in inserting a list of words");
         }
@@ -140,7 +140,14 @@ public class DatabaseController implements Closeable {
             handleSQLException(exception,"Error in deleting Seed");
         }
     }
-
+    public void refreshSeeds(){
+        try{
+            seedModule.refresh();
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error while refreshing seeds");
+        }
+    }
     private void handleSQLException(SQLException exception, String message) {
         System.err.println(message);
         System.err.println(exception.getSQLState());

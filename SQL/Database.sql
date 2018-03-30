@@ -69,8 +69,9 @@ ALTER TABLE Link
 CREATE TABLE Seed
 (
   ID        SERIAL UNIQUE,
-  URL       TEXT NOT NULL UNIQUE ,
-  Processed BOOLEAN DEFAULT FALSE
+  URL       TEXT NOT NULL UNIQUE,
+  Processed BOOLEAN DEFAULT FALSE,
+  InLinks   INTEGER DEFAULT 0
 )
 WITH (
 OIDS = FALSE
@@ -87,8 +88,8 @@ INSERT INTO Seed (URL) VALUES ('https://en.wikipedia.org/wiki/Main_Page'),
   ('http://bbc.com'),
   ('http://tutorialspoint.com'),
   ('http://stackoverflow.com'),
+  ('https://stackoverflow.com'),
   ('https://insights.stackoverflow.com/survey/2018'),
-  ('http://expo.github.io'),
   ('https://en.wikipedia.org'),
   ('http://javacodegeeks.com'),
   ('http://owasp.org'),
@@ -98,4 +99,7 @@ INSERT INTO Seed (URL) VALUES ('https://en.wikipedia.org/wiki/Main_Page'),
   ('https://angular.io/tutorial'),
   ('https://www.namecheap.com'),
   ('https://www.youtube.com');
+CREATE UNLOGGED TABLE TempSeedStorage (LIKE Seed);
+ALTER TABLE TempSeedStorage OWNER TO "SearchEngine";
+
 ALTER USER "SearchEngine" SET search_path to 'SearchEngineSchema'

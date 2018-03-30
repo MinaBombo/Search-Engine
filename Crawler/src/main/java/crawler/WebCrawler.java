@@ -23,16 +23,24 @@ public class WebCrawler {
 
     private static void init(String[] args){
         maxNumThreads = getNumThreads(args[0]);
-        try{
+        try {
             controller = new DatabaseController();
-        } catch (SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             System.exit(0);
         }
         pool = Executors.newFixedThreadPool(maxNumThreads);
         ConnectionPool.getInstance().setInitialSize(maxNumThreads);
+        Runtime.getRuntime().addShutdownHook(new Thread (){
+            @Override
+            public void run() {
+                System.out.println("Entered Signal Handler");
+                cleanup();
+            }
+        });
     }
-    private static void cleanup(){
+
+    private static void cleanup() {
         pool.shutdown();
         controller.close();
         try {
@@ -42,30 +50,33 @@ public class WebCrawler {
         }
     }
 
-    private static void crawl(){
-        List<Seed> seeds;
-        int processedURLCount = 0;
-        do {
-            seeds = controller.getUnprocessedSeeds(maxNumThreads, 0);
-            List<WebCrawlingTask> tasks = new ArrayList<>();
-            for (Seed seed : seeds) {
-                tasks.add(new WebCrawlingTask(seed));
-            }
-            try {
-                List<Future<List<Seed>>> taskResults = pool.invokeAll(tasks);
-                for (Future<List<Seed>> taskResult : taskResults) {
-                    List<Seed> result = taskResult.get();
-                    if(result != null){
-                        controller.insertSeed(result);
-                        ++processedURLCount;
-                    }
+    private static void crawl() {
+        while (true) {
+            List<Seed> seeds;
+            int processedURLCount = 0;
+            do {
+                seeds = controller.getUnprocessedSeeds(maxNumThreads, 0);
+                List<WebCrawlingTask> tasks = new ArrayList<>();
+                for (Seed seed : seeds) {
+                    tasks.add(new WebCrawlingTask(seed));
                 }
-            } catch (ExecutionException | InterruptedException exception) {
-                System.err.println("Error while executing tasks");
-                exception.printStackTrace();
-            }
-            System.out.println(processedURLCount);
-        } while (!seeds.isEmpty() && processedURLCount <= maxNumUrls);
+                try {
+                    List<Future<List<Seed>>> taskResults = pool.invokeAll(tasks);
+                    for (Future<List<Seed>> taskResult : taskResults) {
+                        List<Seed> result = taskResult.get();
+                        if (result != null) {
+                            controller.insertSeed(result);
+                            ++processedURLCount;
+                        }
+                    }
+                } catch (ExecutionException | InterruptedException exception) {
+                    System.err.println("Error while executing tasks");
+                    exception.printStackTrace();
+                }
+                System.out.println(processedURLCount);
+            } while (!seeds.isEmpty() && processedURLCount <= maxNumUrls);
+            controller.refreshSeeds();
+        }
     }
 
     public static void main(String[] args) {
