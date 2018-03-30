@@ -74,4 +74,8 @@ class RobotsManager {
         }
         return true;
     }
+
+    static void resetRules(){
+        rulesMap.clear();
+    }
 }
