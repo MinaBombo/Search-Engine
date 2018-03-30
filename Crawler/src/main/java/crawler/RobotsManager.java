@@ -14,40 +14,29 @@ import java.util.regex.Pattern;
 
 class RobotsManager {
 
-    private class RobotRule{
-        Pattern pattern;
-        boolean isAllowed;
-
-        RobotRule(Pattern p, boolean a){
-            pattern = p;
-            isAllowed = a;
-        }
-    }
-    private static ConcurrentHashMap<String, List<RobotRule>> rulesMap;
+    private static ConcurrentHashMap<String, List<Pattern>> rulesMap;
 
     RobotsManager() {
         rulesMap = new ConcurrentHashMap<>();
     }
 
     private static String getBaseUrl(String stringUrl) throws MalformedURLException {
-        try {
-            URL url = new URL(stringUrl);
-            return url.getProtocol() + "://" + url.getHost()
-                    + (url.getPort() > -1 ? ":" + url.getPort() : "");
-        } catch (MalformedURLException e) {
-            throw e;
-        }
+        URL url = new URL(stringUrl);
+        return url.getProtocol() + "://" + url.getHost()
+                + (url.getPort() > -1 ? ":" + url.getPort() : "");
     }
 
-    private static List<RobotRule> getRules(String baseUrl) {
+    private static List<Pattern> getRules(String baseUrl) {
+        Document robotsTxt;
         try {
-            Document robotsTxt = Jsoup.connect(baseUrl + "/robots.txt").get();
+            robotsTxt = Jsoup.connect(baseUrl + "/robots.txt").get();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
 
-        List<RobotRule> rules = new LinkedList<>();
+        List<Pattern> rules = new LinkedList<>();
+        String robotsString = robotsTxt.toString();
         // TODO: parse robots.txt
         return rules;
     }
@@ -61,15 +50,15 @@ class RobotsManager {
             return false;
         }
 
-        List<RobotRule> rules = rulesMap.computeIfAbsent(baseUrl, RobotsManager::getRules);
+        List<Pattern> rules = rulesMap.computeIfAbsent(baseUrl, RobotsManager::getRules);
         if (rules == null) {
             return true;
         }
 
-        for(RobotRule rule : rules){
-            Matcher matcher = rule.pattern.matcher(url);
+        for(Pattern rule : rules){
+            Matcher matcher = rule.matcher(url);
             if(matcher.matches()){
-                return rule.isAllowed;
+                return false;
             }
         }
         return true;
