@@ -9,10 +9,21 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class RobotsManager {
-    private static ConcurrentHashMap<String, List<Pattern>> rulesMap;
+
+    private class RobotRule{
+        Pattern pattern;
+        boolean isAllowed;
+
+        RobotRule(Pattern p, boolean a){
+            pattern = p;
+            isAllowed = a;
+        }
+    }
+    private static ConcurrentHashMap<String, List<RobotRule>> rulesMap;
 
     RobotsManager() {
         rulesMap = new ConcurrentHashMap<>();
@@ -29,10 +40,10 @@ class RobotsManager {
         }
     }
 
-    private static List<Pattern> getRules(String baseUrl) {
+    private static List<RobotRule> getRules(String baseUrl) {
         try {
             Document robotsTxt = Jsoup.connect(baseUrl + "/robots.txt").get();
-            List<Pattern> rules = new LinkedList<>();
+            List<RobotRule> rules = new LinkedList<>();
             // TODO: parse robots.txt
             return rules;
         } catch (IOException e) {
@@ -41,25 +52,25 @@ class RobotsManager {
         }
     }
 
-    private static boolean checkUrlToPatterns(List<Pattern> rules, String url) {
-        // TODO: compare url to patterns
-        return true;
-    }
-
     static Boolean isAllowed(String url) {
         try {
             String baseUrl = getBaseUrl(url);
-            List<Pattern> rules = rulesMap.computeIfAbsent(baseUrl, RobotsManager::getRules);
+            List<RobotRule> rules = rulesMap.computeIfAbsent(baseUrl, RobotsManager::getRules);
             if (rules == null) {
                 rulesMap.remove(baseUrl);
                 // TODO: Check what is best to do
                 return false;
             }
-            return checkUrlToPatterns(rules, url);
+            for(RobotRule rule : rules){
+                Matcher matcher = rule.pattern.matcher(url);
+                if(matcher.matches()){
+                    return rule.isAllowed;
+                }
+            }
+            return true;
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return false;
         }
-
     }
 }
