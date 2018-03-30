@@ -23,7 +23,7 @@ class RobotsManager {
             isAllowed = iA;
         }
     }
-    private static ConcurrentHashMap<String, List<RobotRule>> rulesMap;
+    private ConcurrentHashMap<String, List<RobotRule>> rulesMap;
 
     RobotsManager() {
         rulesMap = new ConcurrentHashMap<>();
@@ -35,7 +35,13 @@ class RobotsManager {
                 + (url.getPort() > -1 ? ":" + url.getPort() : "");
     }
 
-    private static List<RobotRule> getRules(String baseUrl) {
+    private static Pattern parseRule(String rule){
+        // TODO: correctly implement this function
+        Pattern pattern = Pattern.compile(rule);
+        return pattern;
+    }
+
+    private List<RobotRule> getRules(String baseUrl) {
         Document robotsTxt;
         try {
             robotsTxt = Jsoup.connect(baseUrl + "/robots.txt").get();
@@ -46,9 +52,13 @@ class RobotsManager {
         }
 
         List<RobotRule> rules = new LinkedList<>();
-        Scanner robotsScanner = new Scanner(robotsTxt.toString());
-        while(!robotsScanner.next().equals("User-agent:")){
+        Scanner robotsScanner = new Scanner(robotsTxt.toString().toLowerCase());
+        while(robotsScanner.hasNext() && !robotsScanner.next().equals("user-agent:")){
             if(robotsScanner.next().equals("*")){
+                String allowance;
+                while(robotsScanner.hasNext() && !(allowance = robotsScanner.next()).equals("user-agent:")){
+                    rules.add(new RobotRule(parseRule(robotsScanner.next()), allowance.equals("allow")));
+                }
                 break;
             }
         }
@@ -56,7 +66,7 @@ class RobotsManager {
         return rules;
     }
 
-    static Boolean isAllowed(String url) {
+    Boolean isAllowed(String url) {
         String baseUrl;
         try {
             baseUrl = getBaseUrl(url);
@@ -66,7 +76,7 @@ class RobotsManager {
             return false;
         }
 
-        List<RobotRule> rules = rulesMap.computeIfAbsent(baseUrl, RobotsManager::getRules);
+        List<RobotRule> rules = rulesMap.computeIfAbsent(baseUrl, this::getRules);
         if (rules == null) {
             return true;
         }
@@ -74,13 +84,13 @@ class RobotsManager {
         for(RobotRule rule : rules){
             Matcher matcher = rule.pattern.matcher(url);
             if(matcher.matches()){
-                return false;
+                return rule.isAllowed;
             }
         }
         return true;
     }
 
-    static void resetRules(){
+    void resetRules(){
         rulesMap.clear();
     }
 }
