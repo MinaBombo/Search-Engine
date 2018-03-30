@@ -57,7 +57,6 @@ class RobotsManager {
         try {
             baseUrl = getBaseUrl(url);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
             return false;
         }
 
