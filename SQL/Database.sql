@@ -80,25 +80,26 @@ TABLESPACE pg_default;
 
 ALTER TABLE Seed
   OWNER TO "SearchEngine";
-INSERT INTO Seed (URL) VALUES ('https://en.wikipedia.org/wiki/Main_Page'),
-  ('http://facebook.com'), ('http://digitaloccean.com'), ('http://gitlab.com'), ('http://amazon.com'),
-  ('http://twitter.com'),
-  ('http://google.com'),
-  ('http://cnn.com'),
-  ('http://bbc.com'),
-  ('http://tutorialspoint.com'),
-  ('http://stackoverflow.com'),
-  ('https://stackoverflow.com'),
-  ('https://insights.stackoverflow.com/survey/2018'),
-  ('https://en.wikipedia.org'),
-  ('http://javacodegeeks.com'),
-  ('http://owasp.org'),
-  ('http://mongodb.com'),
-  ('http://github.com'),
-  ('http://facebook.github.io'),
-  ('https://angular.io/tutorial'),
-  ('https://www.namecheap.com'),
-  ('https://www.youtube.com');
+-- INSERT INTO Seed (URL) VALUES ('https://en.wikipedia.org/wiki/Main_Page'),
+--   ('http://facebook.com'), ('http://digitaloccean.com'), ('http://gitlab.com'), ('http://amazon.com'),
+--   ('http://twitter.com'),
+--   ('http://google.com'),
+--   ('http://cnn.com'),
+--   ('http://bbc.com'),
+--   ('http://tutorialspoint.com'),
+--   ('http://stackoverflow.com'),
+--   ('https://stackoverflow.com'),
+--   ('https://insights.stackoverflow.com/survey/2018'),
+--   ('https://en.wikipedia.org'),
+--   ('http://javacodegeeks.com'),
+--   ('http://owasp.org'),
+--   ('http://mongodb.com'),
+--   ('http://github.com'),
+--   ('http://facebook.github.io'),
+--   ('https://angular.io/tutorial'),
+--   ('https://www.namecheap.com'),
+--   ('https://www.youtube.com');
+INSERT INTO SEED (URL) VALUES ('http://www.robotstxt.org');
 CREATE UNLOGGED TABLE TempSeedStorage (LIKE Seed);
 ALTER TABLE TempSeedStorage OWNER TO "SearchEngine";
 
