@@ -8,6 +8,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -36,8 +37,16 @@ class RobotsManager {
         }
 
         List<Pattern> rules = new LinkedList<>();
-        String robotsString = robotsTxt.toString();
-        // TODO: parse robots.txt
+        Scanner robotsScanner = new Scanner(robotsTxt.toString());
+        while(!robotsScanner.next().equals("User-agent:")){
+            if(robotsScanner.next().equals("*")){
+                while(robotsScanner.next().equals("Disallow:")){
+                    rules.add(Pattern.compile(robotsScanner.next()));
+                }
+                break;
+            }
+        }
+        robotsScanner.close();
         return rules;
     }
 
