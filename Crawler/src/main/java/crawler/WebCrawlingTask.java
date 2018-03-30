@@ -24,6 +24,10 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
 
     @Override
     public List<Seed> call(){
+        if(!WebCrawler.robotsManager.isAllowed(seed.getUrl())){
+           return null;
+        }
+
         String documentText;
         List<Seed> seeds;
         DatabaseController controller;
@@ -43,7 +47,9 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
             documentText = jsoupDoc.body().text();
             seeds = new LinkedList<>();
             for (Element link : links) {
-                seeds.add(new Seed(link.attr("abs:href"), false));
+                if(WebCrawler.robotsManager.isAllowed(link.attr("abs:href"))) {
+                    seeds.add(new Seed(link.attr("abs:href"), false));
+                }
             }
         } catch (Exception exception) {
             System.err.println("Error while downloading/parsing document from web");

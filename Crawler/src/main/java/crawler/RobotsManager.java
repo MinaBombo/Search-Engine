@@ -19,7 +19,7 @@ class RobotsManager {
         rulesMap = new ConcurrentHashMap<>();
     }
 
-    private static String getBaseUrl(String stringUrl) throws MalformedURLException {
+    private String getBaseUrl(String stringUrl) throws MalformedURLException {
         URL url = new URL(stringUrl);
         return url.getProtocol() + "://" + url.getHost()
                 + (url.getPort() > -1 ? ":" + url.getPort() : "");
