@@ -53,24 +53,25 @@ class RobotsManager {
     }
 
     static Boolean isAllowed(String url) {
+        String baseUrl;
         try {
-            String baseUrl = getBaseUrl(url);
-            List<RobotRule> rules = rulesMap.computeIfAbsent(baseUrl, RobotsManager::getRules);
-            if (rules == null) {
-                rulesMap.remove(baseUrl);
-                // TODO: Check what is best to do
-                return false;
-            }
-            for(RobotRule rule : rules){
-                Matcher matcher = rule.pattern.matcher(url);
-                if(matcher.matches()){
-                    return rule.isAllowed;
-                }
-            }
-            return true;
+            baseUrl = getBaseUrl(url);
         } catch (MalformedURLException e) {
             e.printStackTrace();
             return false;
         }
+
+        List<RobotRule> rules = rulesMap.computeIfAbsent(baseUrl, RobotsManager::getRules);
+        if (rules == null) {
+            return true;
+        }
+
+        for(RobotRule rule : rules){
+            Matcher matcher = rule.pattern.matcher(url);
+            if(matcher.matches()){
+                return rule.isAllowed;
+            }
+        }
+        return true;
     }
 }
