@@ -12,15 +12,15 @@
 
 DROP SCHEMA IF EXISTS "SearchEngineSchema" CASCADE;
 CREATE SCHEMA "SearchEngineSchema"
-    AUTHORIZATION "SearchEngine";
+  AUTHORIZATION "SearchEngine";
 
 SET SEARCH_PATH TO "SearchEngineSchema";
-	
+
 CREATE TABLE Document
 (
   ID        SERIAL UNIQUE,
   Name      CHARACTER VARYING(255) NOT NULL,
-  URL       CHARACTER VARYING(255),
+  URL       TEXT,
   Processed BOOLEAN DEFAULT FALSE
 )
 
@@ -68,9 +68,9 @@ ALTER TABLE Link
 
 CREATE TABLE Seed
 (
-  ID  SERIAL UNIQUE,
-  URL TEXT NOT NULL,
-  Processed BOOLEAN DEFAULT  FALSE
+  ID        SERIAL UNIQUE,
+  URL       TEXT NOT NULL UNIQUE ,
+  Processed BOOLEAN DEFAULT FALSE
 )
 WITH (
 OIDS = FALSE
@@ -79,5 +79,23 @@ TABLESPACE pg_default;
 
 ALTER TABLE Seed
   OWNER TO "SearchEngine";
-INSERT INTO Seed (URL,Processed) VALUES ('https://en.wikipedia.org/wiki/Main_Page',FALSE );
+INSERT INTO Seed (URL) VALUES ('https://en.wikipedia.org/wiki/Main_Page'),
+  ('http://facebook.com'), ('http://digitaloccean.com'), ('http://gitlab.com'), ('http://amazon.com'),
+  ('http://twitter.com'),
+  ('http://google.com'),
+  ('http://cnn.com'),
+  ('http://bbc.com'),
+  ('http://tutorialspoint.com'),
+  ('http://stackoverflow.com'),
+  ('https://insights.stackoverflow.com/survey/2018'),
+  ('http://expo.github.io'),
+  ('https://en.wikipedia.org'),
+  ('http://javacodegeeks.com'),
+  ('http://owasp.org'),
+  ('http://mongodb.com'),
+  ('http://github.com'),
+  ('http://facebook.github.io'),
+  ('https://angular.io/tutorial'),
+  ('https://www.namecheap.com'),
+  ('https://www.youtube.com');
 ALTER USER "SearchEngine" SET search_path to 'SearchEngineSchema'

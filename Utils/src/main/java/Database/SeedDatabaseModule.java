@@ -32,7 +32,7 @@ public class SeedDatabaseModule implements DatabaseModule<List<Seed>> {
     }
     @Override
     public void insert(List<Seed> seeds) throws SQLException {
-        String sqlStatement = "INSERT INTO "+ DatabaseColumn.SEED + "(URL, Processed) VALUES (?,?)";
+        String sqlStatement = "INSERT INTO "+ DatabaseColumn.SEED + "(URL, Processed) VALUES (?,?) ON CONFLICT (URL) DO NOTHING";
         PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement);
         for(Seed seed : seeds) {
             statement.setString(1, seed.getUrl());
