@@ -15,7 +15,15 @@ import java.util.regex.Pattern;
 
 class RobotsManager {
 
-    private static ConcurrentHashMap<String, List<Pattern>> rulesMap;
+    private class RobotRule{
+        private Pattern pattern;
+        private boolean isAllowed;
+        private RobotRule(Pattern p, boolean iA){
+            pattern = p;
+            isAllowed = iA;
+        }
+    }
+    private static ConcurrentHashMap<String, List<RobotRule>> rulesMap;
 
     RobotsManager() {
         rulesMap = new ConcurrentHashMap<>();
@@ -27,7 +35,7 @@ class RobotsManager {
                 + (url.getPort() > -1 ? ":" + url.getPort() : "");
     }
 
-    private static List<Pattern> getRules(String baseUrl) {
+    private static List<RobotRule> getRules(String baseUrl) {
         Document robotsTxt;
         try {
             robotsTxt = Jsoup.connect(baseUrl + "/robots.txt").get();
@@ -37,13 +45,10 @@ class RobotsManager {
             return null;
         }
 
-        List<Pattern> rules = new LinkedList<>();
+        List<RobotRule> rules = new LinkedList<>();
         Scanner robotsScanner = new Scanner(robotsTxt.toString());
         while(!robotsScanner.next().equals("User-agent:")){
             if(robotsScanner.next().equals("*")){
-                while(robotsScanner.next().equals("Disallow:")){
-                    rules.add(Pattern.compile(robotsScanner.next()));
-                }
                 break;
             }
         }
@@ -61,13 +66,13 @@ class RobotsManager {
             return false;
         }
 
-        List<Pattern> rules = rulesMap.computeIfAbsent(baseUrl, RobotsManager::getRules);
+        List<RobotRule> rules = rulesMap.computeIfAbsent(baseUrl, RobotsManager::getRules);
         if (rules == null) {
             return true;
         }
 
-        for(Pattern rule : rules){
-            Matcher matcher = rule.matcher(url);
+        for(RobotRule rule : rules){
+            Matcher matcher = rule.pattern.matcher(url);
             if(matcher.matches()){
                 return false;
             }
