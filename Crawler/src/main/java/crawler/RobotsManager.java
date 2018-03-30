@@ -1,23 +1,21 @@
 package crawler;
 
+import com.panforge.robotstxt.RobotsTxt;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Scanner;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 class RobotsManager {
 
-    private static ConcurrentHashMap<String, List<Pattern>> rulesMap;
+    private ConcurrentHashMap<String, RobotsTxt> rulesMap;
+    private String userAgent;
 
-    RobotsManager() {
+    RobotsManager(String agent) {
+        userAgent = agent;
         rulesMap = new ConcurrentHashMap<>();
     }
 
@@ -27,53 +25,42 @@ class RobotsManager {
                 + (url.getPort() > -1 ? ":" + url.getPort() : "");
     }
 
-    private static List<Pattern> getRules(String baseUrl) {
-        Document robotsTxt;
+    private RobotsTxt getRules(String baseUrl) {
+        Document robotsTxtDoc;
         try {
-            robotsTxt = Jsoup.connect(baseUrl + "/robots.txt").get();
+            robotsTxtDoc = Jsoup.connect(baseUrl + "/robots.txt").get();
         } catch (IOException e) {
+            System.err.println("Error while downloading robots file");
             e.printStackTrace();
             return null;
         }
-
-        List<Pattern> rules = new LinkedList<>();
-        Scanner robotsScanner = new Scanner(robotsTxt.toString());
-        while(!robotsScanner.next().equals("User-agent:")){
-            if(robotsScanner.next().equals("*")){
-                while(robotsScanner.next().equals("Disallow:")){
-                    rules.add(Pattern.compile(robotsScanner.next()));
-                }
-                break;
-            }
+        try {
+            return RobotsTxt.read(new ByteArrayInputStream(robotsTxtDoc.body().text().getBytes()));
+        } catch (IOException e){
+            System.err.println("Error while parsing robots file");
+            e.printStackTrace();
+            return null;
         }
-        robotsScanner.close();
-        return rules;
     }
 
-    static Boolean isAllowed(String url) {
+    Boolean isAllowed(String url) {
         String baseUrl;
         try {
             baseUrl = getBaseUrl(url);
         } catch (MalformedURLException e) {
+            System.err.println("Error while getting base url");
             e.printStackTrace();
             return false;
         }
 
-        List<Pattern> rules = rulesMap.computeIfAbsent(baseUrl, RobotsManager::getRules);
-        if (rules == null) {
+        RobotsTxt robotsTxt = rulesMap.computeIfAbsent(baseUrl, this::getRules);
+        if (robotsTxt == null) {
             return true;
         }
-
-        for(Pattern rule : rules){
-            Matcher matcher = rule.matcher(url);
-            if(matcher.matches()){
-                return false;
-            }
-        }
-        return true;
+        return(robotsTxt.query(userAgent, url));
     }
 
-    static void resetRules(){
+    void resetRules(){
         rulesMap.clear();
     }
 }
