@@ -86,12 +86,12 @@ public class SeedDatabaseModule implements DatabaseModule<List<Seed>> {
     }
 
     public void refresh() throws SQLException {
-        String sqlStatement = "INSERT INTO TempSeedStorage SELECT * FROM ((SELECT * FROM SEED s1 WHERE s1.processed = true ORDER BY RANDOM() LIMIT 2500 )UNION (SELECT * FROM SEED s2 WHERE s2.processed = false ORDER BY RANDOM() LIMIT 2500)) SeedSelection;\n";
+        String sqlStatement = "INSERT INTO TempSeedStorage (ID,URL,InLinks,Processed) SELECT  ID,URL,InLinks,FALSE FROM ((SELECT * FROM SEED s1 WHERE s1.processed = true ORDER BY RANDOM() LIMIT 2500 )UNION (SELECT * FROM SEED s2 WHERE s2.processed = false ORDER BY RANDOM() LIMIT 2500)) SeedSelection;";
         Statement statement = connector.getPooledConnection().createStatement();
         statement.execute(sqlStatement);
         sqlStatement = "DELETE FROM Seed;";
         statement.execute(sqlStatement);
-        sqlStatement = "INSERT INTO Seed Select * FROM TempSeedStorage";
+        sqlStatement = "INSERT INTO Seed (URL,Processed,InLinks) Select URL,Processed,InLinks FROM TempSeedStorage;";
         statement.execute(sqlStatement);
         sqlStatement = "DELETE FROM TempSeedStorage";
         statement.execute(sqlStatement);
