@@ -24,10 +24,6 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
 
     @Override
     public List<Seed> call(){
-        if(!WebCrawler.robotsManager.isAllowed(seed.getUrl())){
-           return null;
-        }
-
         String documentText;
         List<Seed> seeds;
         DatabaseController controller;
@@ -36,6 +32,11 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
         } catch (SQLException exception) {
             System.err.println("Error while initializing database connection");
             exception.printStackTrace();
+            return null;
+        }
+        if(!WebCrawler.robotsManager.isAllowed(seed.getUrl())){
+            controller.deleteSeed(seed);
+            controller.close();
             return null;
         }
         // Try to get the html document from the web.
