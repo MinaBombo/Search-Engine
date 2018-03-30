@@ -42,13 +42,14 @@ class RobotsManager {
     private static List<RobotRule> getRules(String baseUrl) {
         try {
             Document robotsTxt = Jsoup.connect(baseUrl + "/robots.txt").get();
-            List<RobotRule> rules = new LinkedList<>();
-            // TODO: parse robots.txt
-            return rules;
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
+
+        List<RobotRule> rules = new LinkedList<>();
+        // TODO: parse robots.txt
+        return rules;
     }
 
     static Boolean isAllowed(String url) {
