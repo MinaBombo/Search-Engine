@@ -35,7 +35,6 @@ class RobotsManager {
             return url.getProtocol() + "://" + url.getHost()
                     + (url.getPort() > -1 ? ":" + url.getPort() : "");
         } catch (MalformedURLException e) {
-            e.printStackTrace();
             throw e;
         }
     }
@@ -57,6 +56,7 @@ class RobotsManager {
         try {
             baseUrl = getBaseUrl(url);
         } catch (MalformedURLException e) {
+            e.printStackTrace();
             return false;
         }
 
