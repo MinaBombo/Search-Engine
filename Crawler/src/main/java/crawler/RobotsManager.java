@@ -32,6 +32,7 @@ class RobotsManager {
         try {
             robotsTxt = Jsoup.connect(baseUrl + "/robots.txt").get();
         } catch (IOException e) {
+            System.err.println("Error while downloading robots file");
             e.printStackTrace();
             return null;
         }
@@ -55,6 +56,7 @@ class RobotsManager {
         try {
             baseUrl = getBaseUrl(url);
         } catch (MalformedURLException e) {
+            System.err.println("Error while getting base url");
             e.printStackTrace();
             return false;
         }
