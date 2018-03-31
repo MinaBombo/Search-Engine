@@ -39,29 +39,48 @@ public class SeedDatabaseModule implements DatabaseModule<List<Seed>> {
         catch (SQLException exception){
             if(exception.getSQLState().equals(duplicateKeyErrorState)){
                 //System.err.println("Duplicate Key value, resolving");
-                deleteSeedWithURL(seed);
-                seed.setInLinks(seed.getInLinks()+1);
-                update(seed);
+                seed.setInLinks(seed.getInLinks()+deleteSeedWithURL(seed)+1);
+                delete(seed);
+                insert(seed);
             }
             else throw  exception;
-
         }
     }
-    public void deleteSeedWithURL(Seed seed){
-        String sqlStatement = "DELETE FROM " +DatabaseColumn.SEED + " WHERE URL = ?";
+    public void insert(Seed seed) throws SQLException{
+        String sqlStatement = "INSERT INTO " + DatabaseColumn.SEED + "(URL, Processed , InLinks) VALUES (?,?,?) ON CONFLICT (URL) DO UPDATE SET InLinks = EXCLUDED.InLinks+1";
+        PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement,Statement.RETURN_GENERATED_KEYS);
+        statement.setString(1, seed.getUrl());
+        statement.setBoolean(2, seed.isProcessed());
+        statement.setInt(3, seed.getInLinks());
+        statement.executeUpdate();
+        ResultSet resultSet =statement.getGeneratedKeys();
+        if(resultSet.next()){
+            seed.setId(resultSet.getInt(1));
+        }
+        resultSet.close();
+        statement.close();
+
+    }
+    public int deleteSeedWithURL(Seed seed){
+        String sqlStatement = "DELETE FROM " +DatabaseColumn.SEED + " WHERE URL = ? RETURNING InLinks";
+        int inLinkCount = 0;
         try(PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement)) {
             statement.setString(1, seed.getUrl());
-            statement.executeUpdate();
+            ResultSet resultSet = statement.executeQuery();
+            if(resultSet.next()){
+                inLinkCount = resultSet.getInt(1);
+            }
         }
         catch (SQLException exception){
             System.err.println("Error while deleting seed with URL");
         }
+        return inLinkCount;
     }
 
     @Override
     public void insert(List<Seed> seeds) throws SQLException {
         String sqlStatement = "INSERT INTO " + DatabaseColumn.SEED + "(URL, Processed , InLinks) VALUES (?,?,?) ON CONFLICT (URL) DO UPDATE SET InLinks = EXCLUDED.InLinks+1";
-        PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement);
+        PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS);
         for (Seed seed : seeds) {
             statement.setString(1, seed.getUrl());
             statement.setBoolean(2, seed.isProcessed());
@@ -75,6 +94,7 @@ public class SeedDatabaseModule implements DatabaseModule<List<Seed>> {
         while (resultSet.next()) {
             seeds.get(counter++).setId(resultSet.getInt(1));
         }
+        resultSet.close();
         statement.close();
     }
 

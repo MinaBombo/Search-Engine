@@ -66,9 +66,8 @@ public class WebCrawlingTask implements Callable<WebCrawlerState> {
             documentText = jsoupDoc.body().text();
             seeds = new LinkedList<>();
             for (Element link : links) {
-                if(WebCrawler.robotsManager.query(state.getRobotsTxt(),url)) {
-                    seeds.add(new Seed(link.attr("abs:href"), false));
-                }
+                seeds.add(new Seed(link.attr("abs:href"), false));
+                
             }
         } catch (Exception  exception) {
             logger.log(Level.WARNING,"Error while downloading/parsing document from web");
