@@ -47,7 +47,8 @@ public class WebCrawler {
         try {
             ConnectionPool.getInstance().close();
         } catch (Exception exception) {
-            exception.printStackTrace();
+            System.err.println("Error While closing pool");
+            //exception.printStackTrace();
         }
     }
     private static void crawl() {
@@ -73,7 +74,7 @@ public class WebCrawler {
                     }
                 } catch (ExecutionException | InterruptedException exception) {
                     System.err.println("Error while executing tasks");
-                    exception.printStackTrace();
+                    //exception.printStackTrace();
                 }
                 System.out.println(processedURLCount);
             } while (!seeds.isEmpty() && processedURLCount <= maxNumUrls);

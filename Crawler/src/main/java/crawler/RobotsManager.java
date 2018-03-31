@@ -34,12 +34,12 @@ class RobotsManager {
             return RobotsTxt.read(new ByteArrayInputStream(robotsTxtDoc.body().text().getBytes()));
         } catch (IOException e){
             System.err.println("Error while download/parsing robots.txt");
-            e.printStackTrace();
+            //e.printStackTrace();
             try{
                 return RobotsTxt.read(new ByteArrayInputStream(defaultRobots));
             }catch (IOException ioe){
                 System.err.println("Error while setting default robots.txt");
-                ioe.printStackTrace();
+                //ioe.printStackTrace();
                 return null;
             }
         }
@@ -51,7 +51,7 @@ class RobotsManager {
             baseUrl = getBaseUrl(url);
         } catch (MalformedURLException e) {
             System.err.println("Error while getting base url");
-            e.printStackTrace();
+            //e.printStackTrace();
             return false;
         }
 

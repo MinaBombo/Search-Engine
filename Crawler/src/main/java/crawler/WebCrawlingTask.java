@@ -34,7 +34,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
             controller = new DatabaseController();
         } catch (SQLException exception) {
             System.err.println("Error while initializing database connection");
-            exception.printStackTrace();
+            //exception.printStackTrace();
             return null;
         }
         if(!WebCrawler.robotsManager.isAllowed(seed.getUrl())){
@@ -61,7 +61,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
             }
         } catch (Exception  exception) {
             System.err.println("Error while downloading/parsing document from web");
-            exception.printStackTrace();
+            //exception.printStackTrace();
             controller.deleteSeed(seed);
             controller.close();
             return null;
