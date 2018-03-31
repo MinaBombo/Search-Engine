@@ -13,14 +13,16 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 public class WebCrawlingTask implements Callable<List<Seed>> {
 
     private Seed seed;
-
-    WebCrawlingTask(Seed seed) {
+    private Set<String> urlSet;
+    WebCrawlingTask(Seed seed, Set <String> urlSet) {
         this.seed = seed;
+        this.urlSet = urlSet;
     }
 
     @Override
@@ -35,16 +37,27 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
             exception.printStackTrace();
             return null;
         }
+        if(!WebCrawler.robotsManager.isAllowed(seed.getUrl())){
+            controller.deleteSeed(seed);
+            controller.close();
+            return null;
+        }
         // Try to get the html document from the web.
         // If for any reason you failed, delete this seed and exit the task
         Document jsoupDoc;
         try {
             jsoupDoc = Jsoup.connect(seed.getUrl()).get();
+            if(urlSet.contains(jsoupDoc.location())){
+                return null;
+            }
+            seed.setUrl(jsoupDoc.location());
             Elements links = jsoupDoc.select("a[href]");
             documentText = jsoupDoc.body().text();
             seeds = new LinkedList<>();
             for (Element link : links) {
-                seeds.add(new Seed(link.attr("abs:href"), false));
+                if(WebCrawler.robotsManager.isAllowed(link.attr("abs:href"))) {
+                    seeds.add(new Seed(link.attr("abs:href"), false));
+                }
             }
         } catch (Exception  exception) {
             System.err.println("Error while downloading/parsing document from web");
@@ -62,6 +75,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
         seed.setProcessed(true);
         controller.updateSeed(seed);
         controller.close();
+        urlSet.add(seed.getUrl());
         return seeds;
     }
 }
