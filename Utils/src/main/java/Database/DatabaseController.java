@@ -132,6 +132,14 @@ public class DatabaseController implements Closeable {
             handleSQLException(exception,"Error in updating Seed");
         }
     }
+    public void advancedSeedUpdate(Seed seed){
+        try{
+            seedModule.advancedUpdate(seed);
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error in advanced seed update");
+        }
+    }
     public void deleteSeed(Seed seed){
         try {
             seedModule.delete(seed);

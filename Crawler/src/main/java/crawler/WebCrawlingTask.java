@@ -15,11 +15,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
+import java.util.logging.Logger;
 
 public class WebCrawlingTask implements Callable<List<Seed>> {
 
     private Seed seed;
     private Set<String> urlSet;
+    private static Logger logger =Logger.getLogger(WebCrawlingTask.class.getName());
     WebCrawlingTask(Seed seed, Set <String> urlSet) {
         this.seed = seed;
         this.urlSet = urlSet;
@@ -33,7 +35,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
         try {
             controller = new DatabaseController();
         } catch (SQLException exception) {
-            System.err.println("Error while initializing database connection");
+            //logger.log(Level. ,"Error while initializing database connection");
             //exception.printStackTrace();
             return null;
         }
@@ -48,6 +50,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
         try {
             jsoupDoc = Jsoup.connect(seed.getUrl()).get();
             if(urlSet.contains(jsoupDoc.location())){
+                controller.deleteSeed(seed);
                 return null;
             }
             seed.setUrl(jsoupDoc.location());

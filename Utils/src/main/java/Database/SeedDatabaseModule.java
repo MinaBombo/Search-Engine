@@ -11,7 +11,6 @@ import java.util.List;
 
 public class SeedDatabaseModule implements DatabaseModule<List<Seed>> {
     DatabaseConnector connector;
-
     SeedDatabaseModule(DatabaseConnector connector) {
         this.connector = connector;
     }
@@ -31,6 +30,32 @@ public class SeedDatabaseModule implements DatabaseModule<List<Seed>> {
         statement.setInt(4, seed.getId());
         statement.executeUpdate();
         statement.close();
+    }
+    public void advancedUpdate(Seed seed) throws SQLException{
+        String duplicateKeyErrorState = "23505";
+        try{
+            update(seed);
+        }
+        catch (SQLException exception){
+            if(exception.getSQLState().equals(duplicateKeyErrorState)){
+                System.err.println("Duplicate Key value, resolving");
+                deleteSeedWithURL(seed);
+                seed.setInLinks(seed.getInLinks()+1);
+                update(seed);
+            }
+            else throw  exception;
+
+        }
+    }
+    public void deleteSeedWithURL(Seed seed){
+        String sqlStatement = "DELETE FROM " +DatabaseColumn.SEED + " WHERE URL = ?";
+        try(PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement)) {
+            statement.setString(1, seed.getUrl());
+            statement.executeUpdate();
+        }
+        catch (SQLException exception){
+            System.err.println("Error while deleting seed with URL");
+        }
     }
 
     @Override
