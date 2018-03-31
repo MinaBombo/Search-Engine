@@ -12,14 +12,16 @@ import org.jsoup.select.Elements;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 public class WebCrawlingTask implements Callable<List<Seed>> {
 
     private Seed seed;
-
-    WebCrawlingTask(Seed seed) {
+    private Set<String> urlSet;
+    WebCrawlingTask(Seed seed, Set <String> urlSet) {
         this.seed = seed;
+        this.urlSet = urlSet;
     }
 
     @Override
@@ -44,6 +46,10 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
         Document jsoupDoc;
         try {
             jsoupDoc = Jsoup.connect(seed.getUrl()).get();
+            if(urlSet.contains(jsoupDoc.location())){
+                return null;
+            }
+            seed.setUrl(jsoupDoc.location());
             Elements links = jsoupDoc.select("a[href]");
             documentText = jsoupDoc.body().text();
             seeds = new LinkedList<>();
@@ -68,6 +74,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
         seed.setProcessed(true);
         controller.updateSeed(seed);
         controller.close();
+        urlSet.add(seed.getUrl());
         return seeds;
     }
 }
