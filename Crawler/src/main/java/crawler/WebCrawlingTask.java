@@ -9,6 +9,7 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +46,7 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
             for (Element link : links) {
                 seeds.add(new Seed(link.attr("abs:href"), false));
             }
-        } catch (Exception exception) {
+        } catch (Exception  exception) {
             System.err.println("Error while downloading/parsing document from web");
             exception.printStackTrace();
             controller.deleteSeed(seed);
