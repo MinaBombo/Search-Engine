@@ -35,7 +35,6 @@ public class WebCrawler {
         Runtime.getRuntime().addShutdownHook(new Thread (){
             @Override
             public void run() {
-                System.out.println("Entered Signal Handler");
                 cleanup();
             }
         });
@@ -64,11 +63,12 @@ public class WebCrawler {
                     tasks.add(new WebCrawlingTask(seed,urlHashSet));
                 }
                 try {
-                    List<Future<List<Seed>>> taskResults = pool.invokeAll(tasks);
-                    for (Future<List<Seed>> taskResult : taskResults) {
-                        List<Seed> result = taskResult.get();
+                    List<Future<WebCrawlerState>> taskResults = pool.invokeAll(tasks);
+                    for (Future<WebCrawlerState> taskResult : taskResults) {
+                        WebCrawlerState result = taskResult.get();
                         if (result != null) {
-                            controller.insertSeed(result);
+                            controller.insertSeed(result.getSeeds());
+                            robotsManager.addRobotsTxt(result.robotsTxt,result.getUrl());
                             ++processedURLCount;
                         }
                     }

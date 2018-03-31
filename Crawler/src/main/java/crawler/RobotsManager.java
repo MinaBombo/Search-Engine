@@ -1,5 +1,6 @@
 package crawler;
 
+import Tools.LoggerInitializer;
 import com.panforge.robotstxt.RobotsTxt;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -8,6 +9,9 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 class RobotsManager {
 
@@ -15,10 +19,14 @@ class RobotsManager {
     private String userAgent;
     private static final byte[] defaultRobots = ("User-agent: *\n" +
                                                 "Allow: /").getBytes();
-
+    private static Logger logger = Logger.getLogger(RobotsManager.class.getName());
+    private static Boolean loggerInitialized = false;
     RobotsManager(String agent) {
         userAgent = agent;
         rulesMap = new ConcurrentHashMap<>();
+        if(!loggerInitialized)
+             loggerInitialized = LoggerInitializer.initLogger(logger);
+
     }
 
     private String getBaseUrl(String stringUrl) throws MalformedURLException {
@@ -27,13 +35,13 @@ class RobotsManager {
                 + (url.getPort() > -1 ? ":" + url.getPort() : "");
     }
 
-    private RobotsTxt getRules(String baseUrl) {
+    RobotsTxt getRules(String baseUrl) {
         Document robotsTxtDoc;
         try {
             robotsTxtDoc = Jsoup.connect(baseUrl + "/robots.txt").get();
             return RobotsTxt.read(new ByteArrayInputStream(robotsTxtDoc.body().text().getBytes()));
         } catch (IOException e){
-            System.err.println("Error while download/parsing robots.txt");
+            logger.log(Level.WARNING,"Error while download/parsing robots.txt");
             //e.printStackTrace();
             try{
                 return RobotsTxt.read(new ByteArrayInputStream(defaultRobots));
@@ -45,24 +53,35 @@ class RobotsManager {
         }
     }
 
-    Boolean isAllowed(String url) {
+    SeedState isAllowed(String url) {
         String baseUrl;
         try {
             baseUrl = getBaseUrl(url);
         } catch (MalformedURLException e) {
-            System.err.println("Error while getting base url");
+            logger.log(Level.WARNING,"Error while getting base url");
             //e.printStackTrace();
-            return false;
+            return new SeedState(null,false);
         }
+        RobotsTxt robotsTxt;
+        if(rulesMap.containsKey(baseUrl)){
+             robotsTxt = rulesMap.get(baseUrl);
 
-        RobotsTxt robotsTxt = rulesMap.computeIfAbsent(baseUrl, this::getRules);
-        if(robotsTxt != null) {
-            return (robotsTxt.query(userAgent, url));
         }
-        return true;
+        else{
+            robotsTxt = getRules(baseUrl);
+        }
+        return new SeedState(robotsTxt,robotsTxt.query(userAgent,baseUrl));
     }
 
     void resetRules(){
         rulesMap.clear();
+    }
+    void addRobotsTxt(RobotsTxt robotsTxt,String url){
+        try{
+            rulesMap.putIfAbsent(getBaseUrl(url),robotsTxt);
+        }
+        catch (MalformedURLException exception){
+            System.err.println("Error while inserting robotsTxt");
+        }
     }
 }
