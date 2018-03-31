@@ -84,4 +84,12 @@ class RobotsManager {
             System.err.println("Error while inserting robotsTxt");
         }
     }
+    Boolean query(RobotsTxt robotsTxt,String url){
+        try{
+            return robotsTxt.query(userAgent,getBaseUrl(url));
+        }
+        catch (MalformedURLException exception){
+            return false;
+        }
+    }
 }

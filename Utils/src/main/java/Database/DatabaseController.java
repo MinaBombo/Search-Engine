@@ -3,10 +3,12 @@ package Database;
 import BusinessModel.Document;
 import BusinessModel.Word;
 import BusinessModel.Seed;
+import Tools.LoggerInitializer;
 
 import java.io.Closeable;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class DatabaseController implements Closeable {
     DatabaseConnector connector;

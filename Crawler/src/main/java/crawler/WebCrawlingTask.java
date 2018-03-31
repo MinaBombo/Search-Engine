@@ -66,7 +66,7 @@ public class WebCrawlingTask implements Callable<WebCrawlerState> {
             documentText = jsoupDoc.body().text();
             seeds = new LinkedList<>();
             for (Element link : links) {
-                if(WebCrawler.robotsManager.isAllowed(link.attr("abs:href")).getAllowed()) {
+                if(WebCrawler.robotsManager.query(state.getRobotsTxt(),url)) {
                     seeds.add(new Seed(link.attr("abs:href"), false));
                 }
             }

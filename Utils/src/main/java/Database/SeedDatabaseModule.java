@@ -38,7 +38,7 @@ public class SeedDatabaseModule implements DatabaseModule<List<Seed>> {
         }
         catch (SQLException exception){
             if(exception.getSQLState().equals(duplicateKeyErrorState)){
-                System.err.println("Duplicate Key value, resolving");
+                //System.err.println("Duplicate Key value, resolving");
                 deleteSeedWithURL(seed);
                 seed.setInLinks(seed.getInLinks()+1);
                 update(seed);

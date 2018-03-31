@@ -3,7 +3,7 @@ mainClassName = 'crawler.WebCrawler'
 
 
 run{
-    args 20
+    args 30
 }
 dependencies{
     compile 'org.jsoup:jsoup:1.11.2'

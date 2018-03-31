@@ -3,12 +3,14 @@ package crawler;
 import Database.ConnectionPool;
 import Database.DatabaseController;
 import BusinessModel.Seed;
+import Tools.LoggerInitializer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static Tools.ThreadCounter.getNumThreads;
@@ -21,8 +23,9 @@ public class WebCrawler {
     private static ExecutorService pool;
     private static final String userAgent = "CrawlerX";
     static final RobotsManager robotsManager = new RobotsManager(userAgent);
+    private static Logger logger = Logger.getLogger(WebCrawler.class.getName());
 
-    private static void init(String[] args){
+    private static void init(String[] args) {
         maxNumThreads = getNumThreads(args[0]);
         try {
             controller = new DatabaseController();
@@ -32,12 +35,13 @@ public class WebCrawler {
         }
         pool = Executors.newFixedThreadPool(maxNumThreads);
         ConnectionPool.getInstance().setInitialSize(maxNumThreads);
-        Runtime.getRuntime().addShutdownHook(new Thread (){
+        Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
                 cleanup();
             }
         });
+        LoggerInitializer.initLogger(logger);
     }
 
     private static void cleanup() {
@@ -50,8 +54,9 @@ public class WebCrawler {
             //exception.printStackTrace();
         }
     }
+
     private static void crawl() {
-        ConcurrentHashMap<String,Boolean> urlMap = new ConcurrentHashMap<>();
+        ConcurrentHashMap<String, Boolean> urlMap = new ConcurrentHashMap<>();
         Set<String> urlHashSet = urlMap.newKeySet();
         while (true) {
             List<Seed> seeds;
@@ -60,21 +65,27 @@ public class WebCrawler {
                 seeds = controller.getUnprocessedSeeds(maxNumThreads, 0);
                 List<WebCrawlingTask> tasks = new ArrayList<>();
                 for (Seed seed : seeds) {
-                    tasks.add(new WebCrawlingTask(seed,urlHashSet));
+                    tasks.add(new WebCrawlingTask(seed, urlHashSet));
                 }
+                List<Future<WebCrawlerState>> taskResults;
                 try {
-                    List<Future<WebCrawlerState>> taskResults = pool.invokeAll(tasks);
-                    for (Future<WebCrawlerState> taskResult : taskResults) {
+                    taskResults = pool.invokeAll(tasks);
+                } catch (InterruptedException exception) {
+                    logger.log(Level.WARNING, "Error while invoking tasks");
+                    continue;
+                }
+                for (Future<WebCrawlerState> taskResult : taskResults) {
+                    try {
                         WebCrawlerState result = taskResult.get();
                         if (result != null) {
                             controller.insertSeed(result.getSeeds());
-                            robotsManager.addRobotsTxt(result.robotsTxt,result.getUrl());
+                            robotsManager.addRobotsTxt(result.robotsTxt, result.getUrl());
                             ++processedURLCount;
                         }
+                    } catch (ExecutionException | InterruptedException exception) {
+                        logger.log(Level.WARNING, "Error while executing tasks");
+                        controller.deleteSeed(seeds.get(taskResults.indexOf(taskResult)));
                     }
-                } catch (ExecutionException | InterruptedException exception) {
-                    System.err.println("Error while executing tasks");
-                    //exception.printStackTrace();
                 }
                 System.out.println(processedURLCount);
             } while (!seeds.isEmpty() && processedURLCount <= maxNumUrls);
