@@ -34,6 +34,11 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
             exception.printStackTrace();
             return null;
         }
+        if(!WebCrawler.robotsManager.isAllowed(seed.getUrl())){
+            controller.deleteSeed(seed);
+            controller.close();
+            return null;
+        }
         // Try to get the html document from the web.
         // If for any reason you failed, delete this seed and exit the task
         Document jsoupDoc;
@@ -43,7 +48,9 @@ public class WebCrawlingTask implements Callable<List<Seed>> {
             documentText = jsoupDoc.body().text();
             seeds = new LinkedList<>();
             for (Element link : links) {
-                seeds.add(new Seed(link.attr("abs:href"), false));
+                if(WebCrawler.robotsManager.isAllowed(link.attr("abs:href"))) {
+                    seeds.add(new Seed(link.attr("abs:href"), false));
+                }
             }
         } catch (Exception exception) {
             System.err.println("Error while downloading/parsing document from web");

@@ -80,6 +80,11 @@ TABLESPACE pg_default;
 
 ALTER TABLE Seed
   OWNER TO "SearchEngine";
+  
+  CREATE UNLOGGED TABLE TempSeedStorage (LIKE Seed);
+ALTER TABLE TempSeedStorage OWNER TO "SearchEngine";
+
+ALTER USER "SearchEngine" SET search_path to 'SearchEngineSchema'
 -- INSERT INTO Seed (URL) VALUES ('https://en.wikipedia.org/wiki/Main_Page'),
 --   ('http://facebook.com'), ('http://digitaloccean.com'), ('http://gitlab.com'), ('http://amazon.com'),
 --   ('http://twitter.com'),
@@ -99,8 +104,5 @@ ALTER TABLE Seed
 --   ('https://angular.io/tutorial'),
 --   ('https://www.namecheap.com'),
 --   ('https://www.youtube.com');
-INSERT INTO SEED (URL) VALUES ('http://www.robotstxt.org');
-CREATE UNLOGGED TABLE TempSeedStorage (LIKE Seed);
-ALTER TABLE TempSeedStorage OWNER TO "SearchEngine";
+INSERT INTO Seed (URL) VALUES ('https://www.desmos.com');
 
-ALTER USER "SearchEngine" SET search_path to 'SearchEngineSchema'

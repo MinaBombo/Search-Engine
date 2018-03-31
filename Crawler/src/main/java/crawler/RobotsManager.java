@@ -13,13 +13,15 @@ class RobotsManager {
 
     private ConcurrentHashMap<String, RobotsTxt> rulesMap;
     private String userAgent;
+    private static final byte[] defaultRobots = ("User-agent: *\n" +
+                                                "Allow: /").getBytes();
 
     RobotsManager(String agent) {
         userAgent = agent;
         rulesMap = new ConcurrentHashMap<>();
     }
 
-    private static String getBaseUrl(String stringUrl) throws MalformedURLException {
+    private String getBaseUrl(String stringUrl) throws MalformedURLException {
         URL url = new URL(stringUrl);
         return url.getProtocol() + "://" + url.getHost()
                 + (url.getPort() > -1 ? ":" + url.getPort() : "");
@@ -29,17 +31,17 @@ class RobotsManager {
         Document robotsTxtDoc;
         try {
             robotsTxtDoc = Jsoup.connect(baseUrl + "/robots.txt").get();
-        } catch (IOException e) {
-            System.err.println("Error while downloading robots file");
-            e.printStackTrace();
-            return null;
-        }
-        try {
             return RobotsTxt.read(new ByteArrayInputStream(robotsTxtDoc.body().text().getBytes()));
         } catch (IOException e){
-            System.err.println("Error while parsing robots file");
+            System.err.println("Error while download/parsing robots.txt");
             e.printStackTrace();
-            return null;
+            try{
+                return RobotsTxt.read(new ByteArrayInputStream(defaultRobots));
+            }catch (IOException ioe){
+                System.err.println("Error while setting default robots.txt");
+                ioe.printStackTrace();
+                return null;
+            }
         }
     }
 
@@ -54,10 +56,10 @@ class RobotsManager {
         }
 
         RobotsTxt robotsTxt = rulesMap.computeIfAbsent(baseUrl, this::getRules);
-        if (robotsTxt == null) {
-            return true;
+        if(robotsTxt != null) {
+            return (robotsTxt.query(userAgent, url));
         }
-        return(robotsTxt.query(userAgent, url));
+        return true;
     }
 
     void resetRules(){
