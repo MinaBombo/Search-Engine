@@ -34,6 +34,7 @@ class RobotsManager {
             return RobotsTxt.read(new ByteArrayInputStream(robotsTxtDoc.body().text().getBytes()));
         } catch (IOException e){
             System.err.println("Error while download/parsing robots.txt");
+            e.printStackTrace();
             try{
                 return RobotsTxt.read(new ByteArrayInputStream(defaultRobots));
             }catch (IOException ioe){
