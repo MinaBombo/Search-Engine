@@ -21,6 +21,9 @@ public class ConnectionPool implements AutoCloseable {
         dataSource.setUsername(DatabaseConnector.user);
         dataSource.setPassword(DatabaseConnector.password);
         dataSource.setMaxWaitMillis(1000);
+        dataSource.setRemoveAbandonedOnBorrow(true);
+        dataSource.setRemoveAbandonedOnMaintenance(true);
+        dataSource.setRemoveAbandonedTimeout(60);
         //dataSource.setInitialSize(DynamicIndexer.numThreads+1);
     }
     public Connection getConnection() throws SQLException{

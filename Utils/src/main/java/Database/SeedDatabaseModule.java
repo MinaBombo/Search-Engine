@@ -70,6 +70,9 @@ public class SeedDatabaseModule implements DatabaseModule<List<Seed>> {
             if(resultSet.next()){
                 inLinkCount = resultSet.getInt(1);
             }
+            resultSet.close();
+            statement.close();
+            return inLinkCount;
         }
         catch (SQLException exception){
             System.err.println("Error while deleting seed with URL");
@@ -108,6 +111,7 @@ public class SeedDatabaseModule implements DatabaseModule<List<Seed>> {
         while (resultSet.next()) {
             seeds.add(new Seed(resultSet.getInt(1), resultSet.getString(2), resultSet.getBoolean(3), resultSet.getInt(4)));
         }
+        resultSet.close();
         statement.close();
         return seeds;
     }
