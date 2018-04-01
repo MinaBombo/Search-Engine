@@ -26,7 +26,7 @@ public class ConnectionPool implements AutoCloseable {
         dataSource.setRemoveAbandonedTimeout(60);
         //dataSource.setInitialSize(DynamicIndexer.numThreads+1);
     }
-    public Connection getConnection() throws SQLException{
+    public synchronized Connection getConnection() throws SQLException{
         return dataSource.getConnection();
     }
     public void setInitialSize(int initialSize){

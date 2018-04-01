@@ -41,11 +41,11 @@ public class WebCrawlingTask implements Callable<WebCrawlerState> {
         String url;
         try {
             try {
-                controller = new DatabaseController();
+                    controller = new DatabaseController();
             } catch (SQLException exception) {
                 logger.log(Level.WARNING, "Error while initializing database connection");
                 //exception.printStackTrace();
-                if(controller!=null)
+                if (controller != null)
                     controller.close();
                 return null;
             }
@@ -92,8 +92,8 @@ public class WebCrawlingTask implements Callable<WebCrawlerState> {
             urlSet.add(seed.getUrl());
             return new WebCrawlerState(state.getRobotsTxt(), seeds, url);
         } catch (Exception exception) {
-            logger.log(Level.WARNING,"Caught Anonymous Exception");
-            if(controller!=null){
+            logger.log(Level.WARNING, "Caught Anonymous Exception");
+            if (controller != null) {
                 controller.close();
             }
             return null;
