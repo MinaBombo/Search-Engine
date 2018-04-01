@@ -20,6 +20,7 @@ public class ConnectionPool implements AutoCloseable {
         dataSource.setUrl(DatabaseConnector.url);
         dataSource.setUsername(DatabaseConnector.user);
         dataSource.setPassword(DatabaseConnector.password);
+        dataSource.setMaxWaitMillis(1000);
         //dataSource.setInitialSize(DynamicIndexer.numThreads+1);
     }
     public Connection getConnection() throws SQLException{
@@ -27,6 +28,9 @@ public class ConnectionPool implements AutoCloseable {
     }
     public void setInitialSize(int initialSize){
         dataSource.setInitialSize(initialSize);
+        dataSource.setMinIdle(initialSize);
+        dataSource.setMaxTotal(2*initialSize);
+        dataSource.setMaxIdle(2*initialSize);
     }
 
     @Override

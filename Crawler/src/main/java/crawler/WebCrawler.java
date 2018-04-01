@@ -7,6 +7,7 @@ import Tools.LoggerInitializer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -34,7 +35,7 @@ public class WebCrawler {
             System.exit(0);
         }
         pool = Executors.newFixedThreadPool(maxNumThreads);
-        ConnectionPool.getInstance().setInitialSize(maxNumThreads);
+        ConnectionPool.getInstance().setInitialSize(maxNumThreads+1);
         Runtime.getRuntime().addShutdownHook(new Thread() {
             @Override
             public void run() {
