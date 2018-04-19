@@ -1,4 +1,4 @@
-package Indexer;
+package Ranker;
 
 public class Page {
 
