@@ -7,7 +7,6 @@ import Tools.LoggerInitializer;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.*;
@@ -36,12 +35,7 @@ public class WebCrawler {
         }
         pool = Executors.newFixedThreadPool(maxNumThreads);
         ConnectionPool.getInstance().setInitialSize(maxNumThreads+1);
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                cleanup();
-            }
-        });
+        Runtime.getRuntime().addShutdownHook(new Thread(WebCrawler::cleanup));
         LoggerInitializer.initLogger(logger);
     }
 
@@ -57,8 +51,7 @@ public class WebCrawler {
     }
 
     private static void crawl() {
-        ConcurrentHashMap<String, Boolean> urlMap = new ConcurrentHashMap<>();
-        Set<String> urlHashSet = urlMap.newKeySet();
+        Set<String> urlHashSet = ConcurrentHashMap.newKeySet();
         while (true) {
             List<Seed> seeds;
             int processedURLCount = 0;
