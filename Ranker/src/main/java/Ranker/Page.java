@@ -15,10 +15,7 @@ public class Page {
         linkingPages = new LinkedList<>();
     }
 
-
-    public int getOutLinks() {
-        return outLinks;
-    }
+    public int getOutLinks() {return outLinks;}
 
     public double getRank() {
         return rank;
