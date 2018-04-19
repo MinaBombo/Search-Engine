@@ -4,9 +4,9 @@ public class Page {
 
     private final int id;
     private final int outLinks;
-    private int rank;
+    private double rank;
 
-    public Page(int id, int outLinks, int rank){
+    public Page(int id, int outLinks, double rank){
         this.id = id;
         this.outLinks = outLinks;
         this.rank = rank;
@@ -21,10 +21,10 @@ public class Page {
         return outLinks;
     }
 
-    public int getRank() {
+    public double getRank() {
         return rank;
     }
-    public void setRank(int rank) {
+    public void setRank(double rank) {
         this.rank = rank;
     }
 }
