@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 
 import static Tools.ThreadCounter.getNumThreads;
 
-public class DynamicIndexer {
+public class Indexer {
 
 
     public static void main(String[] args) throws SQLException, InterruptedException {
