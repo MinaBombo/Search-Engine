@@ -1,2 +1,3 @@
 rootProject.name = 'SearchEngine'
-include 'Indexer','Crawler','Utils'
+include 'Indexer','Crawler','Utils','Ranker'
+
