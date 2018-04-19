@@ -6,7 +6,7 @@ dependencies {
     compile project (':Utils')
 }
 
-mainClassName = 'Indexer.DynamicIndexer'
+mainClassName = 'Indexer.Indexer'
 run{
     args 5
 }
