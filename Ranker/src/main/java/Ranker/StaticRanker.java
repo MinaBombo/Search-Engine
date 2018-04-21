@@ -9,6 +9,8 @@ public class StaticRanker {
     private static Logger logger = Logger.getLogger(StaticRanker.class.getName());
     private static int numIterations;
     private static final int defaultNumIterations = 100;
+    private static double dampingFactor;
+    private static final double defaultDampingFactor = 0.5;
     private static List<Page> pagesToRank = null;
 
     private static void setPagesToRank(){
@@ -27,6 +29,7 @@ public class StaticRanker {
             for(Page linkingPage : linkingPages){
                 newRank += linkingPage.getRank() / linkingPage.getOutLinks();
             }
+            newRank = (1-dampingFactor) + dampingFactor*newRank;
             pageToRank.setRank(newRank);
         }
     }
@@ -56,6 +59,14 @@ public class StaticRanker {
             e.printStackTrace();
             logger.warning("Setting to default: " + String.valueOf(defaultNumIterations));
             numIterations = defaultNumIterations;
+        }
+        try{
+            dampingFactor = Double.parseDouble(args[1]);
+        } catch (Exception e){
+            logger.warning("Error while parsing damping factor");
+            e.printStackTrace();
+            logger.warning("Setting to default: " + String.valueOf(defaultDampingFactor));
+            dampingFactor = defaultDampingFactor;
         }
         rank();
     }
