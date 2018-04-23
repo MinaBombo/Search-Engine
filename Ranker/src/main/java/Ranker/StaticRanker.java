@@ -93,9 +93,6 @@ public class StaticRanker {
             rankerDocuments.add(new RankerDocument(page.getDocumentID(),page.getRank()));
         }
         controller.updateRankerDocuments(rankerDocuments);
-        //TODO: implement this function
-        // This function should save back the updated pages ranks into database
-        // TODO: decide upon database edition for adapting to ranker
     }
 
     private static void rank() {
