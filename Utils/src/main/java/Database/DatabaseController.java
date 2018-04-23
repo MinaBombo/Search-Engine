@@ -1,13 +1,12 @@
 package Database;
 
-import BusinessModel.Document;
-import BusinessModel.Word;
-import BusinessModel.Seed;
+import BusinessModel.*;
 import Tools.LoggerInitializer;
 
 import java.io.Closeable;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class DatabaseController implements Closeable {
@@ -16,12 +15,16 @@ public class DatabaseController implements Closeable {
     WordDatabaseModule wordModule;
     WordListDatabaseModule wordsModule;
     SeedDatabaseModule seedModule;
+    LinkDatabaseModule linkModule;
+    RankerDocumentDatabaseModule rankerDocumentDatabaseModule;
     public DatabaseController() throws SQLException {
         connector = new DatabaseConnector();
         documentModule = new DocumentDatabaseModule(connector);
         wordModule = new WordDatabaseModule(connector);
         wordsModule = new WordListDatabaseModule(connector);
         seedModule = new SeedDatabaseModule(connector);
+        linkModule = new LinkDatabaseModule(connector);
+        rankerDocumentDatabaseModule = new RankerDocumentDatabaseModule(connector);
     }
 
     @Override
@@ -150,12 +153,50 @@ public class DatabaseController implements Closeable {
             handleSQLException(exception,"Error in deleting Seed");
         }
     }
+    public void insertLinks(List<Link> links){
+        try{
+            linkModule.insert(links);
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error in inserting links");
+        }
+    }
     public void refreshSeeds(){
         try{
             seedModule.refresh();
         }
         catch (SQLException exception){
             handleSQLException(exception,"Error while refreshing seeds");
+        }
+    }
+    public List<RankerDocument> getRankerDocuments(){
+        try{
+            return rankerDocumentDatabaseModule.getDocumentIDS();
+        }
+        catch (SQLException excption){
+            handleSQLException(excption,"Error while getting ranker documents");
+        }
+        return null;
+    }
+    public void populateRankerDocument(RankerDocument document){
+        try{
+            rankerDocumentDatabaseModule.getCountAndRankByDocumentID(document);
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error while getting count and rank for document");
+        }
+        try{
+            rankerDocumentDatabaseModule.getOutboundDocuments(document);
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error while getting outbound documents");
+        }
+    }
+    public void updateRankerDocuments(List<RankerDocument> rankerDocuments){
+        try{
+            rankerDocumentDatabaseModule.updateDocumentRank(rankerDocuments);
+        }catch (SQLException exception){
+            handleSQLException(exception,"Error in updating rank for documents");
         }
     }
     private void handleSQLException(SQLException exception, String message) {

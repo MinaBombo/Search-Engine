@@ -37,6 +37,7 @@ public class WebCrawlingTask implements Callable<WebCrawlerState> {
     public WebCrawlerState call() {
         String documentText;
         List<Seed> seeds;
+        List<Link> databaseLinks;
         DatabaseController controller = null;
         String url;
         try {
@@ -69,8 +70,10 @@ public class WebCrawlingTask implements Callable<WebCrawlerState> {
                 Elements links = jsoupDoc.select("a[href]");
                 documentText = jsoupDoc.body().text();
                 seeds = new LinkedList<>();
+                databaseLinks = new LinkedList<>();
                 for (Element link : links) {
                     seeds.add(new Seed(link.attr("abs:href"), false));
+                    databaseLinks.add(new Link(null,link.attr("abs:href")));
 
                 }
             } catch (Exception exception) {
@@ -86,8 +89,12 @@ public class WebCrawlingTask implements Callable<WebCrawlerState> {
                     jsoupDoc.location(), false);
             DocumentManager.writeDocument(documentText, indexerDoc);
             controller.insertDocument(indexerDoc);
+            for(Link link : databaseLinks){
+                link.setDocument(indexerDoc);
+            }
             seed.setProcessed(true);
             controller.advancedSeedUpdate(seed);
+            controller.insertLinks(databaseLinks);
             controller.close();
             urlSet.add(seed.getUrl());
             return new WebCrawlerState(state.getRobotsTxt(), seeds, url);

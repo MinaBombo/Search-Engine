@@ -3,3 +3,7 @@ apply plugin : 'application'
 dependencies{
     compile project (':Utils')
 }
+mainClassName = 'Ranker.StaticRanker'
+run{
+    args = ['100','0.85']
+}

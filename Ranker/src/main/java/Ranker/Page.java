@@ -8,6 +8,15 @@ public class Page {
     private final int outLinks;
     private double rank;
     private List<Page> linkingPages;
+    private Integer documentID;
+
+    public Integer getDocumentID() {
+        return documentID;
+    }
+
+    public void setDocumentID(Integer documentID) {
+        this.documentID = documentID;
+    }
 
     public Page(int outLinks, double rank){
         this.outLinks = outLinks;
