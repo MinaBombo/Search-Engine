@@ -1,6 +1,0 @@
-apply plugin: 'application'
-mainClassName = 'browser.Browser'
-
-dependencies{
-    compile project (':Utils')
-}

@@ -1,7 +1,6 @@
-package browser;
+package DynamicRanker;
 
 import BusinessModel.BrowserDocument;
-import BusinessModel.Document;
 import BusinessModel.DynamicRankerDocument;
 import Database.DatabaseController;
 
@@ -9,13 +8,11 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import static java.lang.Math.log;
 
 public class DynamicRanker {
 
-    private static Logger logger = Logger.getLogger(DynamicRanker.class.getName());
     private List<DynamicRankerDocument> rankingDocsList = null;
     private Map<String, Double> idfMap = null;
     private DatabaseController controller;
