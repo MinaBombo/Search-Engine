@@ -26,16 +26,16 @@ public class StaticRanker {
 
     private static void setPagesToRank() {
         logger.info("Fetching pages to rank");
-        System.out.println("Fetching Pages to rank");
         pagesToRank = new ArrayList<>();
-        List<RankerDocument> rankerDocuments = getPages();
+        List<RankerDocument> rankerDocuments = controller.getRankerDocuments();
         Map<Integer, Pair<Page, RankerDocument>> pageMap = new HashMap<>();
         for (RankerDocument document : rankerDocuments) {
             pageMap.put(document.getId(), new Pair<>(new Page(document.getOutLinks(), document.getRank()), document));
         }
         for (Pair<Page, RankerDocument> pageRankerDocumentPair : pageMap.values()) {
             for (Integer pageID : pageRankerDocumentPair.second.getInBoundDocuments()) {
-                pageRankerDocumentPair.first.getLinkingPages().add(pageMap.get(pageID).first);
+                if (pageMap.containsKey(pageID)) //This happens because I change the URL to the location, 5% max not gonna affect
+                    pageRankerDocumentPair.first.getLinkingPages().add(pageMap.get(pageID).first);
             }
             pageRankerDocumentPair.first.setDocumentID(pageRankerDocumentPair.second.getId());
             pagesToRank.add(pageRankerDocumentPair.first);
@@ -43,37 +43,7 @@ public class StaticRanker {
         rankerDocuments.clear();
         pageMap.clear();
         logger.info("Pages fetched: " + pagesToRank.size());
-        System.out.println("Pages fetched: " + pagesToRank.size());
     }
-
-    private static List<RankerDocument> getPages() {
-        ExecutorService pool = Executors.newFixedThreadPool(20);
-        ConnectionPool.getInstance().setInitialSize(20);
-        List<RankerDocument> rankerDocuments = controller.getRankerDocuments();
-        for (RankerDocument document : rankerDocuments) {
-            pool.submit(() -> {
-                        try {
-                            DatabaseController currentController = new DatabaseController();
-                            currentController.populateRankerDocument(document);
-                            System.out.println(document.getId());
-                            currentController.close();
-
-                        } catch (SQLException exception) {
-                            System.err.println("Couldn't open A controller for this task");
-                        }
-                    }
-            );
-        }
-        pool.shutdown();
-        try {
-            pool.awaitTermination(1, TimeUnit.DAYS);
-        } catch (InterruptedException e) {
-            System.err.println("Error in await termination");
-        }
-        return rankerDocuments;
-
-    }
-
     private static void rankIteration() {
         for (Page pageToRank : pagesToRank) {
             List<Page> linkingPages = pageToRank.getLinkingPages();
@@ -90,12 +60,9 @@ public class StaticRanker {
         logger.info("Saving updated pages");
         List<RankerDocument> rankerDocuments = new ArrayList<>();
         for (Page page : pagesToRank) {
-            rankerDocuments.add(new RankerDocument(page.getDocumentID(),page.getRank()));
+            rankerDocuments.add(new RankerDocument(page.getDocumentID(), page.getRank()));
         }
         controller.updateRankerDocuments(rankerDocuments);
-        //TODO: implement this function
-        // This function should save back the updated pages ranks into database
-        // TODO: decide upon database edition for adapting to ranker
     }
 
     private static void rank() {
@@ -107,7 +74,7 @@ public class StaticRanker {
         saveUpdatedRanks();
     }
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws Exception {
         LoggerInitializer.initLogger(logger);
         try {
             numIterations = Integer.parseInt(args[0]);
@@ -132,6 +99,7 @@ public class StaticRanker {
             return;
         }
         rank();
+        ConnectionPool.getInstance().close();
     }
 
 }

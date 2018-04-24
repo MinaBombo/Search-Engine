@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RankerDocument {
+    public RankerDocument(Integer id , Integer outLinks,Double rank) {
+        this.id = id;
+        this.rank = rank;
+        this.outLinks = outLinks;
+        inBoundDocuments = new ArrayList<>();
+    }
+
     Integer id;
     Double rank;
     Integer outLinks;

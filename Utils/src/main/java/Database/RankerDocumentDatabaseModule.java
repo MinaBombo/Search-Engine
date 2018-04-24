@@ -2,10 +2,7 @@ package Database;
 
 import BusinessModel.RankerDocument;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.*;
 
 public class RankerDocumentDatabaseModule {
@@ -17,14 +14,6 @@ public class RankerDocumentDatabaseModule {
         this.connector = connector;
     }
 
-    List<RankerDocument> getRankerDocuments() throws  SQLException{
-        List<RankerDocument> rankerDocuments = getDocumentIDS();
-        for(RankerDocument rankerDocument : rankerDocuments){
-            getCountAndRankByDocumentID(rankerDocument);
-            getOutboundDocuments(rankerDocument);
-        }
-        return rankerDocuments;
-    }
     List<RankerDocument> getDocumentIDS() throws SQLException {
         List<RankerDocument> rankerDocuments = new ArrayList<>();
         String sqlStatement = "SELECT id from " + DatabaseColumn.DOCUMENT;
@@ -75,5 +64,26 @@ public class RankerDocumentDatabaseModule {
         }
         statement.executeBatch();
         statement.close();
+    }
+
+     List<RankerDocument> getRankerDocuments () throws SQLException{
+        String sqlStatement = "WITH Count AS (SELECT docuemntid , COUNT(*) FROM " + DatabaseColumn.LINK+" GROUP BY docuemntid ORDER BY docuemntid)," +
+                " Rank AS (SELECT  id, rank from " +DatabaseColumn.DOCUMENT+" ORDER BY id)," +
+                " OutBoundLinks AS (SELECT d.id, array_agg(l.docuemntid) FROM " +DatabaseColumn.LINK+ " l INNER JOIN "+ DatabaseColumn.DOCUMENT +" d on l.refrencedlink = d.url GROUP BY d.id ORDER BY d.id)"+
+                " SELECT Count.docuemntid,Count.Count,Rank.Rank,OutBoundLinks.array_agg FROM Count INNER JOIN Rank ON Count.docuemntid = Rank.id INNER JOIN OutBoundLinks ON Count.docuemntid = OutBoundLinks.id";
+        Statement statement = connector.getPooledConnection().createStatement();
+        ResultSet resultSet = statement.executeQuery(sqlStatement);
+        List<RankerDocument> rankerDocuments = new ArrayList<>();
+        while (resultSet.next()){
+            RankerDocument currentRankerDocument = new RankerDocument(resultSet.getInt(1),resultSet.getInt(2),resultSet.getDouble(3));
+            Integer [] outBoundLinks = (Integer[])resultSet.getArray(4).getArray();
+            for(Integer link : outBoundLinks){
+                currentRankerDocument.getInBoundDocuments().add(link);
+            }
+            rankerDocuments.add(currentRankerDocument);
+        }
+        resultSet.close();
+        statement.close();
+        return rankerDocuments;
     }
 }

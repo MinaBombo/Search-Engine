@@ -171,7 +171,7 @@ public class DatabaseController implements Closeable {
     }
     public List<RankerDocument> getRankerDocuments(){
         try{
-            return rankerDocumentDatabaseModule.getDocumentIDS();
+            return rankerDocumentDatabaseModule.getRankerDocuments();
         }
         catch (SQLException excption){
             handleSQLException(excption,"Error while getting ranker documents");
