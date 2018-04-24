@@ -1,6 +1,7 @@
 package Database;
 
 import BusinessModel.Document;
+import org.postgresql.core.SqlCommandType;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -68,5 +69,24 @@ public class DocumentDatabaseModule implements DatabaseModule<Document> {
        statement.close();
        return documents;
 
+    }
+
+    public Integer getNumDocuments()throws SQLException{
+        String sqlStatement = "SELECT COUNT(*) FROM "+DatabaseColumn.DOCUMENT;
+        Statement statement = connector.getPooledConnection().createStatement();
+        ResultSet resultSet = statement.executeQuery(sqlStatement);
+        Integer numDocuments;
+        if(resultSet.next())
+        {
+            numDocuments = resultSet.getInt(1);
+        }
+        else
+        {
+            //Should never reach here
+            throw new SQLException("No Documents Yet");
+        }
+        resultSet.close();
+        statement.close();
+        return numDocuments;
     }
 }

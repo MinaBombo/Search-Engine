@@ -3,8 +3,8 @@ package BusinessModel;
 import java.util.ArrayList;
 import java.util.List;
 
-public class RankerDocument {
-    public RankerDocument(Integer id , Integer outLinks,Double rank) {
+public class StaticRankerDocument {
+    public StaticRankerDocument(Integer id , Integer outLinks, Double rank) {
         this.id = id;
         this.rank = rank;
         this.outLinks = outLinks;
@@ -47,16 +47,16 @@ public class RankerDocument {
     public void setInBoundDocuments(List<Integer> inBoundDocuments) {
         this.inBoundDocuments = inBoundDocuments;
     }
-    public RankerDocument(Integer id,Integer outLinks){
+    public StaticRankerDocument(Integer id, Integer outLinks){
         this.id = id;
         this.outLinks = outLinks;
     }
-    public RankerDocument(Integer id){
+    public StaticRankerDocument(Integer id){
         this.id = id;
         this.inBoundDocuments = new ArrayList<>();
     }
     //Note : Never use inbound docs when using this constructor
-    public RankerDocument(Integer id,Double rank){
+    public StaticRankerDocument(Integer id, Double rank){
         this.id = id;
         this.rank = rank;
     }

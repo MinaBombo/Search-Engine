@@ -37,7 +37,9 @@ CREATE TABLE Word
 (
   ID         SERIAL,
   Text       TEXT    NOT NULL,
-  DocumentID INTEGER NOT NULL REFERENCES Document (ID) ON DELETE CASCADE
+  Count      Integer DEFAULT 1,
+  DocumentID INTEGER NOT NULL REFERENCES Document (ID) ON DELETE CASCADE,
+  CONSTRAINT UniqueConstraint UNIQUE (DocumentID,Text)
 )
 WITH (
 OIDS = FALSE

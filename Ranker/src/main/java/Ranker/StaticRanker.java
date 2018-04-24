@@ -5,10 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
 import java.util.logging.Logger;
 
-import BusinessModel.RankerDocument;
+import BusinessModel.StaticRankerDocument;
 import Database.ConnectionPool;
 import Database.DatabaseController;
 import Tools.LoggerInitializer;
@@ -27,12 +26,12 @@ public class StaticRanker {
     private static void setPagesToRank() {
         logger.info("Fetching pages to rank");
         pagesToRank = new ArrayList<>();
-        List<RankerDocument> rankerDocuments = controller.getRankerDocuments();
-        Map<Integer, Pair<Page, RankerDocument>> pageMap = new HashMap<>();
-        for (RankerDocument document : rankerDocuments) {
+        List<StaticRankerDocument> staticRankerDocuments = controller.getStaticRankerDocuments();
+        Map<Integer, Pair<Page, StaticRankerDocument>> pageMap = new HashMap<>();
+        for (StaticRankerDocument document : staticRankerDocuments) {
             pageMap.put(document.getId(), new Pair<>(new Page(document.getOutLinks(), document.getRank()), document));
         }
-        for (Pair<Page, RankerDocument> pageRankerDocumentPair : pageMap.values()) {
+        for (Pair<Page, StaticRankerDocument> pageRankerDocumentPair : pageMap.values()) {
             for (Integer pageID : pageRankerDocumentPair.second.getInBoundDocuments()) {
                 if (pageMap.containsKey(pageID)) //This happens because I change the URL to the location, 5% max not gonna affect
                     pageRankerDocumentPair.first.getLinkingPages().add(pageMap.get(pageID).first);
@@ -40,7 +39,7 @@ public class StaticRanker {
             pageRankerDocumentPair.first.setDocumentID(pageRankerDocumentPair.second.getId());
             pagesToRank.add(pageRankerDocumentPair.first);
         }
-        rankerDocuments.clear();
+        staticRankerDocuments.clear();
         pageMap.clear();
         logger.info("Pages fetched: " + pagesToRank.size());
     }
@@ -58,11 +57,11 @@ public class StaticRanker {
 
     private static void saveUpdatedRanks() {
         logger.info("Saving updated pages");
-        List<RankerDocument> rankerDocuments = new ArrayList<>();
+        List<StaticRankerDocument> staticRankerDocuments = new ArrayList<>();
         for (Page page : pagesToRank) {
-            rankerDocuments.add(new RankerDocument(page.getDocumentID(), page.getRank()));
+            staticRankerDocuments.add(new StaticRankerDocument(page.getDocumentID(), page.getRank()));
         }
-        controller.updateRankerDocuments(rankerDocuments);
+        controller.updateStaticRankerDocuments(staticRankerDocuments);
     }
 
     private static void rank() {

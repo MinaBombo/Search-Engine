@@ -1,13 +1,11 @@
 package Database;
 
 import BusinessModel.*;
-import Tools.LoggerInitializer;
 
 import java.io.Closeable;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 public class DatabaseController implements Closeable {
     DatabaseConnector connector;
@@ -169,35 +167,56 @@ public class DatabaseController implements Closeable {
             handleSQLException(exception,"Error while refreshing seeds");
         }
     }
-    public List<RankerDocument> getRankerDocuments(){
+    public List<StaticRankerDocument> getStaticRankerDocuments(){
         try{
-            return rankerDocumentDatabaseModule.getRankerDocuments();
+            return rankerDocumentDatabaseModule.getStaticRankerDocuments();
         }
         catch (SQLException excption){
-            handleSQLException(excption,"Error while getting ranker documents");
+            handleSQLException(excption,"Error while getting Static ranker documents");
+        }
+        return null;
+    }    public void updateStaticRankerDocuments(List<StaticRankerDocument> staticRankerDocuments){
+        try{
+            rankerDocumentDatabaseModule.updateDocumentRank(staticRankerDocuments);
+        }catch (SQLException exception){
+            handleSQLException(exception,"Error in updating static rank for documents");
+        }
+    }
+    public List<DynamicRankerDocument> getDynamicRankerDocuments(){
+        try{
+            return rankerDocumentDatabaseModule.getDynamicRankerDocuments();
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error While getting Dynamic Ranker documents");
         }
         return null;
     }
-    public void populateRankerDocument(RankerDocument document){
+    public Map<String,Integer> getWordMap(){
         try{
-            rankerDocumentDatabaseModule.getCountAndRankByDocumentID(document);
+            return rankerDocumentDatabaseModule.getWordMap();
         }
         catch (SQLException exception){
-            handleSQLException(exception,"Error while getting count and rank for document");
+            handleSQLException(exception,"Error while getting word map");
         }
-        try{
-            rankerDocumentDatabaseModule.getOutboundDocuments(document);
-        }
-        catch (SQLException exception){
-            handleSQLException(exception,"Error while getting outbound documents");
-        }
+        return null;
     }
-    public void updateRankerDocuments(List<RankerDocument> rankerDocuments){
+    public Integer getNumDocuments(){
         try{
-            rankerDocumentDatabaseModule.updateDocumentRank(rankerDocuments);
-        }catch (SQLException exception){
-            handleSQLException(exception,"Error in updating rank for documents");
+            return documentModule.getNumDocuments();
         }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error while getting num docs");
+        }
+        return null;
+    }
+    public List<BrowserDocument> getBrowserDocuments(List<DynamicRankerDocument> rankerDocuments){
+        try {
+            return rankerDocumentDatabaseModule.getBrowserDocuments(rankerDocuments);
+        }
+        catch (SQLException exception){
+            handleSQLException(exception,"Error while getting browser documents");
+        }
+        return null;
     }
     private void handleSQLException(SQLException exception, String message) {
         System.err.println(message);

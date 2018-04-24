@@ -5,24 +5,29 @@ import BusinessModel.Word;
 import opennlp.tools.stemmer.PorterStemmer;
 
 import java.io.*;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.nio.file.Files;
+
 
 public class DocumentManager {
     public static void readDocumentWords(Document document) {
         PorterStemmer stemmer = new PorterStemmer();
-        HashSet<String> words = new HashSet<>();
-        try (Scanner scanner = new Scanner(new BufferedReader(new FileReader(PathFinder.getDocumentPath(document.getName()).toFile())))) {
-            while (scanner.hasNext()) {
-                words.add(stemmer.stem(scanner.next()));
+        try {
+            String text = new String(Files.readAllBytes(PathFinder.getDocumentPath(document.getName())));
+            String words[] = text.replaceAll("[^\\p{L} ]", " ").toLowerCase().split("\\s+");
+            String stemmedWord;
+            for (String word : words) {
+                stemmedWord = stemmer.stem(word.toLowerCase());
+                if (stemmedWord.length() > 1) {
+                    document.getWords().add(new Word(stemmedWord, document));
+                }
             }
-            for (String text : words) {
-                document.getWords().add(new Word(text, document));
-            }
-        } catch (IOException exception) {
+        } catch (IOException exception)
+
+        {
             System.err.println("Error in reading document");
             System.err.println(exception.getMessage());
         }
+
     }
 
     public static void writeDocument(String text, Document document) {

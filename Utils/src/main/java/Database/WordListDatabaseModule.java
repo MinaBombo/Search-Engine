@@ -19,7 +19,7 @@ public class WordListDatabaseModule implements DatabaseModule<List<Word>> {
 
     @Override
     public void insert(List<Word> words) throws SQLException {
-        String sqlStatement = "INSERT INTO " + DatabaseColumn.WORD.toString() + " (Text,DocumentID) VALUES (?,?)";
+        String sqlStatement = "INSERT INTO " + DatabaseColumn.WORD.toString() + " (Text,DocumentID) VALUES (?,?) ON CONFLICT(Text,documentid) DO UPDATE SET count = "+DatabaseColumn.WORD+".count +1";
         PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS);
         for (Word word : words) {
             statement.setString(1, word.getText());
@@ -32,6 +32,8 @@ public class WordListDatabaseModule implements DatabaseModule<List<Word>> {
         while (resultSet.next()) {
             words.get(wordCounter++).setId(resultSet.getInt(1));
         }
+        resultSet.close();
+        statement.close();
     }
 
     public void copy(List<Word> words) throws SQLException {
