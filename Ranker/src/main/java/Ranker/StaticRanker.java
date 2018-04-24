@@ -19,7 +19,7 @@ public class StaticRanker {
     private static int numIterations;
     private static final int defaultNumIterations = 100;
     private static double dampingFactor;
-    private static final double defaultDampingFactor = 0.5;
+    private static final double defaultDampingFactor = 0.85;
     private static List<Page> pagesToRank = null;
     private static DatabaseController controller;
 
