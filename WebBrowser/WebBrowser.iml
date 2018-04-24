@@ -25,5 +25,10 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="PROVIDED" name="Tomcat 8.5.30" level="application_server_libraries" />
     <orderEntry type="module" module-name="Utils_main" />
+    <orderEntry type="library" name="postgresql-42.2.2.jre7" level="project" />
+    <orderEntry type="library" name="opennlp-tools-1.8.4" level="project" />
+    <orderEntry type="library" name="commons-dbcp2-2.2.0" level="project" />
+    <orderEntry type="library" name="commons-pool2-2.5.0" level="project" />
+    <orderEntry type="library" name="commons-logging-1.2" level="project" />
   </component>
 </module>
