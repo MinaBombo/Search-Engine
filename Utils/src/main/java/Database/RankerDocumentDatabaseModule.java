@@ -89,7 +89,7 @@ public class RankerDocumentDatabaseModule {
         return wordMap;
     }
     List<BrowserDocument> getSortedBrowserDocuments(List<DynamicRankerDocument> rankerDocuments) throws SQLException{
-        String sqlStatement = "SELECT id, url, name from document WHERE id = ANY (?)";
+        String sqlStatement = "SELECT id, url, name , Description from document WHERE id = ANY (?)";
         Connection connection = connector.getPooledConnection();
         PreparedStatement statement =  connection.prepareStatement(sqlStatement);
         Integer documentIDS[] = new Integer[rankerDocuments.size()];
@@ -101,7 +101,7 @@ public class RankerDocumentDatabaseModule {
         ResultSet resultSet = statement.executeQuery();
         Map<Integer,BrowserDocument> browserDocumentHashMap = new HashMap<>(rankerDocuments.size());
         while (resultSet.next()){
-            browserDocumentHashMap.put(resultSet.getInt(1),new BrowserDocument(resultSet.getInt(1),resultSet.getString(3),resultSet.getString(2)));
+            browserDocumentHashMap.put(resultSet.getInt(1),new BrowserDocument(resultSet.getString(3),resultSet.getString(2),resultSet.getInt(1),resultSet.getString(4)));
         }
         resultSet.close();
         statement.close();

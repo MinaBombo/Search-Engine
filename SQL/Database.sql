@@ -21,7 +21,8 @@ CREATE TABLE Document
   Name      CHARACTER VARYING(255) NOT NULL,
   URL       TEXT,
   Processed BOOLEAN DEFAULT FALSE,
-  Rank      FLOAT DEFAULT 1.0
+  Rank      FLOAT DEFAULT 1.0,
+  Description TEXT
 )
 
 WITH (

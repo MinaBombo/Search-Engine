@@ -36,6 +36,7 @@ public class WebCrawlingTask implements Callable<WebCrawlerState> {
     @Override
     public WebCrawlerState call() {
         String documentText;
+        String documentDescription;
         List<Seed> seeds;
         List<Link> databaseLinks;
         DatabaseController controller = null;
@@ -76,6 +77,14 @@ public class WebCrawlingTask implements Callable<WebCrawlerState> {
                     databaseLinks.add(new Link(null,link.attr("abs:href")));
 
                 }
+                Element description = jsoupDoc.select("meta[property=og:description]").first();
+                if(description != null){
+                    documentDescription = description.attr("content");
+                }
+                else
+                {
+                    documentDescription = seed.getUrl();
+                }
             } catch (Exception exception) {
                 logger.log(Level.WARNING, "Error while downloading/parsing document from web");
                 //exception.printStackTrace();
@@ -87,6 +96,7 @@ public class WebCrawlingTask implements Callable<WebCrawlerState> {
             BusinessModel.Document indexerDoc = new BusinessModel.Document(
                     String.format("%d.html", jsoupDoc.location().hashCode()),
                     jsoupDoc.location(), false);
+            indexerDoc.setDescription(documentDescription);
             DocumentManager.writeDocument(documentText, indexerDoc);
             controller.insertDocument(indexerDoc);
             for(Link link : databaseLinks){

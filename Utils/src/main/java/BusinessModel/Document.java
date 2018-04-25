@@ -8,6 +8,16 @@ public class Document {
     private String name;
     private String url;
     private Boolean processed;
+    private String description;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     private List<Word> words;
 
     public Document(){
@@ -24,6 +34,14 @@ public class Document {
         setName(name);
         setUrl(url);
         setProcessed(processed);
+        words = new ArrayList<>();
+    }
+    public Document(Integer id , String name, String url,boolean processed,String description){
+        setId(id);
+        setName(name);
+        setUrl(url);
+        setProcessed(processed);
+        this.description = description;
         words = new ArrayList<>();
     }
 

@@ -20,11 +20,12 @@ public class DocumentDatabaseModule implements DatabaseModule<Document> {
 
     @Override
     public void insert(Document document) throws SQLException {
-        String sqlStatement = "INSERT INTO " + DatabaseColumn.DOCUMENT.toString() + "(Name,URL,Processed) VALUES (?,?,?)";
+        String sqlStatement = "INSERT INTO " + DatabaseColumn.DOCUMENT.toString() + "(Name,URL,Processed,Description) VALUES (?,?,?,?)";
         PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS);
         statement.setString(1, document.getName());
         statement.setString(2, document.getUrl());
         statement.setBoolean(3,document.isProcessed());
+        statement.setString(4,document.getDescription());
         int affectedRows = statement.executeUpdate();
         if (affectedRows > 0) {
             ResultSet resultSet = statement.getGeneratedKeys();
@@ -37,12 +38,13 @@ public class DocumentDatabaseModule implements DatabaseModule<Document> {
 
     @Override
     public void update(Document document) throws SQLException {
-        String sqlStatement = "UPDATE " + DatabaseColumn.DOCUMENT.toString() + " SET Name = ? ,URL = ? ,Processed = ? WHERE ID = ?";
+        String sqlStatement = "UPDATE " + DatabaseColumn.DOCUMENT.toString() + " SET Name = ? ,URL = ? ,Processed = ? , Description = ? WHERE ID = ?";
         PreparedStatement statement = connector.getPooledConnection().prepareStatement(sqlStatement);
         statement.setString(1, document.getName());
         statement.setString(2, document.getUrl());
         statement.setBoolean(3,document.isProcessed());
-        statement.setInt(4, document.getId());
+        statement.setString(4,document.getDescription());
+        statement.setInt(5, document.getId());
         statement.executeUpdate();
         statement.close();
     }
@@ -58,12 +60,12 @@ public class DocumentDatabaseModule implements DatabaseModule<Document> {
 
     @Override
     public List<Document> select() throws SQLException {
-       String sqlStatement = "SELECT ID, Name, URL , Processed FROM "+DatabaseColumn.DOCUMENT.toString()+" WHERE Processed = False";
+       String sqlStatement = "SELECT ID, Name, URL , Processed , Description FROM "+DatabaseColumn.DOCUMENT.toString()+" WHERE Processed = False";
        Statement statement = connector.getPooledConnection().createStatement();
        ResultSet resultSet = statement.executeQuery(sqlStatement);
        List<Document> documents = new ArrayList<>();
        while (resultSet.next()){
-           documents.add(new Document(resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getBoolean(4)));
+           documents.add(new Document(resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3),resultSet.getBoolean(4),resultSet.getString(5)));
        }
        resultSet.close();
        statement.close();

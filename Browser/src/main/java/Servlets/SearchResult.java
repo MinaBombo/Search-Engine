@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @WebServlet(urlPatterns = "/search_result.html")
 public class SearchResult extends HttpServlet {
@@ -19,16 +20,20 @@ public class SearchResult extends HttpServlet {
             throws ServletException, IOException {
         DynamicRanker dynamicRanker = new DynamicRanker();
         final String keywords[] = req.getParameter("keywords").split(" ");
-        List<BrowserDocument> browserDocumentList = dynamicRanker.rank(keywords);
-        if(browserDocumentList == null){
+        try{
+            dynamicRanker.rank(keywords);
+        }
+        catch (NoSuchElementException exception){
             resp.getWriter().println("No Search Results found for you query");
             return;
         }
+        List<BrowserDocument> browserDocumentList = dynamicRanker.getBrowserDocuments(1);
         // TODO: show urls and parts of documents
         // TODO: handle url redirection
         try (PrintWriter printWriter = resp.getWriter()){
             for(BrowserDocument browserDocument:browserDocumentList){
                 printWriter.println(browserDocument.getUrl());
+                printWriter.println(browserDocument.getDescription());
             }
         }catch (IOException e){
             e.printStackTrace();

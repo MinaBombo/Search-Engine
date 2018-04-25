@@ -1,7 +1,5 @@
 apply plugin: 'war'
 apply plugin: 'com.bmuschko.tomcat'
-apply plugin: 'application'
-mainClassName =  'DynamicRanker.test'
 buildscript {
     repositories {
         jcenter()
