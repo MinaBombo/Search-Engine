@@ -5,9 +5,16 @@
     <title>Search Engine</title>
 </head>
 <body>
+
+<script>
+    function redirect(){
+        location.href='search_result.html?keywords='+document.forms[0].elements[0].value+'&page=1';
+    }
+</script>
+
 <div align="center">
     Search Engine
-    <form action="search_result.html">
+    <form action="javascript:redirect();">
         <input type="text" name="keywords"><br>
         <input type="submit" value="Search">
     </form>
