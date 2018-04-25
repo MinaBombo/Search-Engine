@@ -108,6 +108,7 @@ Temporary Items
 #All build folders
 */build/
 */resources/
+!Browser/src/main/resources
 
 Output/
 # Gradle
@@ -194,8 +195,8 @@ atlassian-ide-plugin.xml
 # Logs
 # ----
 /*.log
-*\*.log
-*\*.lck
+*/*.log
+*/*.lck
 
 # oh-my-zsh gradle plugin
 .gradletasknamecache
