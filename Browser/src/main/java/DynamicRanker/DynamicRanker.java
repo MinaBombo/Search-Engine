@@ -27,7 +27,6 @@ public class DynamicRanker {
     }
 
     private void processSearchWord(String searchWord){
-        System.out.println(idfMap.size());
         double wordIdf = idfMap.get(searchWord);
         for(DynamicRankerDocument dynamicRankerDocument :rankingDocsList){
             dynamicRankerDocument.addToDynamicRank(wordIdf * dynamicRankerDocument.getNormWordFreq(searchWord));
@@ -40,11 +39,16 @@ public class DynamicRanker {
 
     public List<BrowserDocument> rank(String searchWords[]){
         getRelevantData(searchWords);
-        for(String searchWord:searchWords){
-            processSearchWord(searchWord);
+        if(rankingDocsList.size() == 0 || idfMap.size() == 0) {
+            return null;
         }
-        rankingDocsList.sort(DynamicRankerDocument::compareTo);
-        return getFinalSortedDocs();
+        else {
+            for (String searchWord : searchWords) {
+                processSearchWord(searchWord);
+            }
+            rankingDocsList.sort(DynamicRankerDocument::compareTo);
+            return getFinalSortedDocs();
+        }
     }
 
     public DynamicRanker(){

@@ -20,7 +20,10 @@ public class SearchResult extends HttpServlet {
         DynamicRanker dynamicRanker = new DynamicRanker();
         final String keywords[] = req.getParameter("keywords").split(" ");
         List<BrowserDocument> browserDocumentList = dynamicRanker.rank(keywords);
-        System.out.println(browserDocumentList.size());
+        if(browserDocumentList == null){
+            resp.getWriter().println("No Search Results found for you query");
+            return;
+        }
         // TODO: show urls and parts of documents
         // TODO: handle url redirection
         try (PrintWriter printWriter = resp.getWriter()){
