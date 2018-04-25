@@ -19,6 +19,7 @@ public class Home extends HttpServlet {
         resp.setContentType("text/html");
         resp.setCharacterEncoding("UTF-8");
         ClassLoader classLoader = getClass().getClassLoader();
+        System.out.println("Entered");
         try {
             File file = new File(classLoader.getResource("/home.html").getFile());
             try (Scanner scanner = new Scanner(file)) {
