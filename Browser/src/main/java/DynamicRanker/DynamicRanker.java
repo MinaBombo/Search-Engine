@@ -17,9 +17,9 @@ public class DynamicRanker {
     private Map<String, Double> idfMap = null;
     private DatabaseController controller;
 
-    private void getRelevantData(){
-        rankingDocsList = controller.getDynamicRankerDocuments();
-        Map<String,Integer> wordMap = controller.getWordMap();
+    private void getRelevantData(String [] searchWords){
+        rankingDocsList = controller.getDynamicRankerDocuments(searchWords);
+        Map<String,Integer> wordMap = controller.getWordMap(searchWords);
         Integer numDocuments = controller.getNumDocuments();
         for(Map.Entry<String ,Integer> entry : wordMap.entrySet()){
             idfMap.put(entry.getKey(),log((double)numDocuments/entry.getValue()));
@@ -27,6 +27,7 @@ public class DynamicRanker {
     }
 
     private void processSearchWord(String searchWord){
+        System.out.println(idfMap.size());
         double wordIdf = idfMap.get(searchWord);
         for(DynamicRankerDocument dynamicRankerDocument :rankingDocsList){
             dynamicRankerDocument.addToDynamicRank(wordIdf * dynamicRankerDocument.getNormWordFreq(searchWord));
@@ -38,7 +39,7 @@ public class DynamicRanker {
     }
 
     public List<BrowserDocument> rank(String searchWords[]){
-        getRelevantData();
+        getRelevantData(searchWords);
         for(String searchWord:searchWords){
             processSearchWord(searchWord);
         }

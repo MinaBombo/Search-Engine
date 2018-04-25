@@ -108,6 +108,7 @@ Temporary Items
 #All build folders
 */build/
 */resources/
+*/out/
 !Browser/src/main/resources
 
 Output/

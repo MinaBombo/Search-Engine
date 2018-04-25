@@ -182,18 +182,18 @@ public class DatabaseController implements Closeable {
             handleSQLException(exception,"Error in updating static rank for documents");
         }
     }
-    public List<DynamicRankerDocument> getDynamicRankerDocuments(){
+    public List<DynamicRankerDocument> getDynamicRankerDocuments(String [] searchWords){
         try{
-            return rankerDocumentDatabaseModule.getDynamicRankerDocuments();
+            return rankerDocumentDatabaseModule.getDynamicRankerDocuments(searchWords);
         }
         catch (SQLException exception){
             handleSQLException(exception,"Error While getting Dynamic Ranker documents");
         }
         return null;
     }
-    public Map<String,Integer> getWordMap(){
+    public Map<String,Integer> getWordMap(String [] searchWords){
         try{
-            return rankerDocumentDatabaseModule.getWordMap();
+            return rankerDocumentDatabaseModule.getWordMap(searchWords);
         }
         catch (SQLException exception){
             handleSQLException(exception,"Error while getting word map");
@@ -211,7 +211,7 @@ public class DatabaseController implements Closeable {
     }
     public List<BrowserDocument> getBrowserDocuments(List<DynamicRankerDocument> rankerDocuments){
         try {
-            return rankerDocumentDatabaseModule.getBrowserDocuments(rankerDocuments);
+            return rankerDocumentDatabaseModule.getSortedBrowserDocuments(rankerDocuments);
         }
         catch (SQLException exception){
             handleSQLException(exception,"Error while getting browser documents");

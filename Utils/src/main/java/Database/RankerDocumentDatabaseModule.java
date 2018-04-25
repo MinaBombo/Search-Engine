@@ -49,12 +49,14 @@ public class RankerDocumentDatabaseModule {
         return staticRankerDocuments;
     }
 
-    List<DynamicRankerDocument> getDynamicRankerDocuments() throws SQLException {
-        String sqlStatement = "WITH word AS (SELECT documentid AS id, sum(count) AS length, array_agg(text) AS Words, array_agg(count) AS Count FROM " + DatabaseColumn.WORD + " GROUP BY documentid ORDER BY documentid),\n" +
+    List<DynamicRankerDocument> getDynamicRankerDocuments(String [] searchWords) throws SQLException {
+        String sqlStatement = "WITH word AS (SELECT documentid AS id, sum(count) AS length, array_agg(text) AS Words, array_agg(count) AS Count FROM " + DatabaseColumn.WORD + " WHERE Text = ANY (?) GROUP BY documentid ORDER BY documentid),\n" +
                 " Rank AS (SELECT id, rank from " + DatabaseColumn.DOCUMENT + " ORDER BY id)\n" +
                 " SELECT word.id, Rank.rank, word.length, word.words, word.Count FROM word INNER JOIN Rank on word.id = Rank.id;";
-        Statement statement = connector.getPooledConnection().createStatement();
-        ResultSet resultSet = statement.executeQuery(sqlStatement);
+        Connection connection = connector.getPooledConnection();
+        PreparedStatement statement = connection.prepareStatement(sqlStatement);
+        statement.setArray(1,connection.createArrayOf("TEXT",searchWords));
+        ResultSet resultSet = statement.executeQuery();
         List<DynamicRankerDocument> documents = new ArrayList<>();
         while (resultSet.next()) {
             DynamicRankerDocument dynamicRankerDocument = new DynamicRankerDocument(resultSet.getInt(1), resultSet.getInt(3), resultSet.getDouble(2));
@@ -72,11 +74,13 @@ public class RankerDocumentDatabaseModule {
         return documents;
     }
 
-    Map<String, Integer> getWordMap() throws SQLException{
+    Map<String, Integer> getWordMap(String [] searchWords) throws SQLException{
         Map<String,Integer> wordMap = new HashMap<>();
-        String sqlStatement = "SELECT text,COUNT(*) FROM " +DatabaseColumn.WORD+" GROUP BY text";
-        Statement statement = connector.getPooledConnection().createStatement();
-        ResultSet resultSet = statement.executeQuery(sqlStatement);
+        String sqlStatement = "SELECT text,COUNT(*) FROM " +DatabaseColumn.WORD+" WHERE Text = ANY (?) GROUP BY text";
+        Connection connection = connector.getPooledConnection();
+        PreparedStatement statement = connection.prepareStatement(sqlStatement);
+        statement.setArray(1,connection.createArrayOf("TEXT",searchWords));
+        ResultSet resultSet = statement.executeQuery();
         while (resultSet.next()){
             wordMap.put(resultSet.getString(1),resultSet.getInt(2));
         }
@@ -84,8 +88,8 @@ public class RankerDocumentDatabaseModule {
         statement.close();
         return wordMap;
     }
-    List<BrowserDocument> getBrowserDocuments(List<DynamicRankerDocument> rankerDocuments) throws SQLException{
-        String sqlStatement = "SELECT id, url, name from document WHERE id = ANY (?) ORDER BY Rank";
+    List<BrowserDocument> getSortedBrowserDocuments(List<DynamicRankerDocument> rankerDocuments) throws SQLException{
+        String sqlStatement = "SELECT id, url, name from document WHERE id = ANY (?)";
         Connection connection = connector.getPooledConnection();
         PreparedStatement statement =  connection.prepareStatement(sqlStatement);
         Integer documentIDS[] = new Integer[rankerDocuments.size()];
@@ -95,12 +99,16 @@ public class RankerDocumentDatabaseModule {
         }
         statement.setArray(1,connection.createArrayOf("INTEGER",documentIDS));
         ResultSet resultSet = statement.executeQuery();
-        List<BrowserDocument> browserDocuments = new ArrayList<>(rankerDocuments.size());
+        Map<Integer,BrowserDocument> browserDocumentHashMap = new HashMap<>(rankerDocuments.size());
         while (resultSet.next()){
-            browserDocuments.add(new BrowserDocument(resultSet.getInt(1),resultSet.getString(2),resultSet.getString(3)));
+            browserDocumentHashMap.put(resultSet.getInt(1),new BrowserDocument(resultSet.getInt(1),resultSet.getString(3),resultSet.getString(2)));
         }
         resultSet.close();
         statement.close();
+        List<BrowserDocument> browserDocuments = new ArrayList<>();
+        for(DynamicRankerDocument rankerDocument: rankerDocuments){
+            browserDocuments.add(browserDocumentHashMap.get(rankerDocument.getId()));
+        }
         return browserDocuments;
 
     }

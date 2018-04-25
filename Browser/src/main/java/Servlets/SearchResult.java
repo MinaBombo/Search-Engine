@@ -19,7 +19,6 @@ public class SearchResult extends HttpServlet {
             throws ServletException, IOException {
         DynamicRanker dynamicRanker = new DynamicRanker();
         final String keywords[] = req.getParameter("keywords").split(" ");
-        System.out.println(keywords.length);
         List<BrowserDocument> browserDocumentList = dynamicRanker.rank(keywords);
         System.out.println(browserDocumentList.size());
         // TODO: show urls and parts of documents
